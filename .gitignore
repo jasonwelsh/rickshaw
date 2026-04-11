@@ -3,3 +3,7 @@ rickshaw.db-shm
 rickshaw.db-wal
 __pycache__/
 *.pyc
+telegram_inbox.txt
+telegram_outbox.txt
+bridge.log
+inbox_daemon.log

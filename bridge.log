@@ -79,3 +79,21 @@
 2026-04-11 15:31:10,830 INFO Telegram [jason]: im not seeing it in the powershell
 2026-04-11 15:31:10,831 INFO Injecting into: ⠐ Claude Code (PID 17832)
 2026-04-11 15:31:10,876 INFO Injected successfully
+2026-04-11 15:32:19,659 INFO Telegram [jason]: i dont see what i typy aphear in powershell yet
+2026-04-11 15:32:19,660 INFO Injecting into: ✳ Claude Code (PID 17832)
+2026-04-11 15:32:19,694 INFO Injected successfully
+2026-04-11 15:34:14,841 INFO Telegram bridge starting...
+2026-04-11 15:34:14,842 INFO Bot token loaded. Chat ID: 7230448255
+2026-04-11 15:34:14,843 INFO Polling for Telegram messages...
+2026-04-11 15:34:42,923 INFO Telegram [jason]: ok this is a fresh msg
+2026-04-11 15:34:42,924 INFO Injecting into: ✳ Claude Code (PID 17832)
+2026-04-11 15:34:42,956 INFO Injected successfully
+2026-04-11 15:34:54,621 INFO Telegram [jason]: 3:34pm est
+2026-04-11 15:34:54,622 INFO Injecting into: ⠂ Claude Code (PID 17832)
+2026-04-11 15:34:54,663 INFO Injected successfully
+2026-04-11 15:36:16,782 INFO Telegram [jason]: im not seeingbany msgs
+2026-04-11 15:36:16,783 INFO Injecting into: ✳ Claude Code (PID 17832)
+2026-04-11 15:36:16,826 INFO Injected successfully
+2026-04-11 15:40:32,924 INFO Telegram [jason]: what folder are you working out of ?
+2026-04-11 15:40:32,925 INFO Injecting into: ✳ Claude Code (PID 17832)
+2026-04-11 15:40:32,971 INFO Injected successfully
