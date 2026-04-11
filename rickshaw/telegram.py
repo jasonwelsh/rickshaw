@@ -80,7 +80,7 @@ class TelegramBot:
         self._app = app
         await app.initialize()
         await app.start()
-        await app.updater.start_polling(drop_pending_updates=True)
+        await app.updater.start_polling(drop_pending_updates=False)
         log.info("Telegram bot polling started")
 
         # Block until shutdown
@@ -107,6 +107,7 @@ class TelegramBot:
     # ── Commands ─────────────────────────────────────────────────
 
     async def _cmd_start(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        print(f"[TG] /start from @{update.effective_user.username} (id={update.effective_user.id})")
         self._save_chat_id(update.effective_chat.id)
         name = self.brain.get_config("name", config.NAME)
         await update.message.reply_text(
@@ -191,7 +192,11 @@ class TelegramBot:
     # ── Message Handler ──────────────────────────────────────────
 
     async def _on_message(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        user = update.effective_user
+        print(f"[TG] Message from @{user.username} (id={user.id}): {update.message.text[:80]}")
+
         if not self._is_allowed(update):
+            print(f"[TG] BLOCKED - user not in allowed list: {self.allowed_users}")
             await update.message.reply_text("Not authorized.")
             return
 
@@ -200,11 +205,14 @@ class TelegramBot:
         if not text.strip():
             return
 
+        print(f"[TG] Processing: {text[:80]}")
         # Process in thread to avoid blocking the event loop
         try:
             response = await asyncio.to_thread(self.engine.process, text)
+            print(f"[TG] Response: {response[:80]}")
         except Exception as e:
             response = f"Error: {e}"
+            print(f"[TG] ERROR: {e}")
             log.error(f"Engine error: {e}")
 
         await self._send_reply(update, response)
