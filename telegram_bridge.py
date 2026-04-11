@@ -83,12 +83,20 @@ log = logging.getLogger("bridge")
 # ── Console Injection ────────────────────────────────────────────────
 
 def find_claude_console():
-    """Find the console window title containing 'claude' or the PowerShell running claude."""
-    # Strategy: look for console windows with claude in the title
+    """Find the console window running Claude Code (ConsoleWindowClass only)."""
     results = []
 
     def enum_callback(hwnd, _):
         if user32.IsWindowVisible(hwnd):
+            # Check window class — only target real consoles
+            class_buf = ctypes.create_unicode_buffer(256)
+            user32.GetClassNameW(hwnd, class_buf, 256)
+            win_class = class_buf.value
+
+            # Only target console/terminal windows, NOT Notepad/editors
+            if win_class not in ("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS"):
+                return True
+
             length = user32.GetWindowTextLengthW(hwnd) + 1
             buf = ctypes.create_unicode_buffer(length)
             user32.GetWindowTextW(hwnd, buf, length)
@@ -139,20 +147,24 @@ def inject_text_to_console(text):
 
 def inject_to_target_console(target_pid, text):
     """Attach to another process's console and inject text."""
-    # Detach from current console
-    kernel32.FreeConsole()
+    # If we're already in the same console (child process), try direct write
+    # This happens when running from the same terminal as Claude
+    try:
+        kernel32.FreeConsole()
+    except Exception:
+        pass
 
-    # Attach to target console
-    if not kernel32.AttachConsole(target_pid):
-        # Re-attach to our own
+    attached = kernel32.AttachConsole(target_pid)
+    if not attached:
+        # Try re-attaching to parent
         kernel32.AttachConsole(ATTACH_PARENT_PROCESS)
         return False
 
     success = inject_text_to_console(text)
 
-    # Detach and re-attach to our own
     kernel32.FreeConsole()
-    kernel32.AttachConsole(ATTACH_PARENT_PROCESS)
+    # Re-attach to own console (may fail if we're pythonw, that's ok)
+    kernel32.AllocConsole()
 
     return success
 
