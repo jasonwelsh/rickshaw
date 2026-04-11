@@ -271,9 +271,11 @@ def cmd_status():
     running = False
     if pid:
         try:
-            os.kill(int(pid), 0)
-            running = True
-        except (OSError, ValueError):
+            import subprocess
+            r = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+                               capture_output=True, text=True, timeout=5)
+            running = pid in r.stdout
+        except Exception:
             pass
 
     hwnd = get_pinned_hwnd()

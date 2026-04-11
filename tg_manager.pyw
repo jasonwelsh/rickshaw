@@ -1,54 +1,41 @@
-"""Telegram Bridge Manager — System tray GUI for managing the injector.
-
-Features:
-  - Window picker: see all console windows, click to pin target
-  - Start/stop injector daemon
-  - Status indicator in system tray
-  - Test injection button
-
-Run: pythonw tg_manager.pyw
-"""
+"""Telegram Bridge Manager — Simple GUI to manage the injector daemon."""
 import ctypes
 import ctypes.wintypes
 import os
 import subprocess
 import sys
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 HWND_FILE = os.path.join(SCRIPT_DIR, "claude_hwnd.txt")
 PID_FILE = os.path.join(SCRIPT_DIR, "inject.pid")
 INJECT_SCRIPT = os.path.join(SCRIPT_DIR, "telegram_inject.py")
-DB_PATH = os.path.join(SCRIPT_DIR, "rickshaw.db")
+PYTHONW = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
 
 user32 = ctypes.windll.user32
 
 
 def find_console_windows():
     results = []
-
     def enum_cb(hwnd, _):
         if user32.IsWindowVisible(hwnd):
-            class_buf = ctypes.create_unicode_buffer(256)
-            user32.GetClassNameW(hwnd, class_buf, 256)
-            if class_buf.value in ("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS"):
-                length = user32.GetWindowTextLengthW(hwnd) + 1
-                buf = ctypes.create_unicode_buffer(length)
-                user32.GetWindowTextW(hwnd, buf, length)
-                pid = ctypes.wintypes.DWORD()
-                user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
-                results.append((hwnd, pid.value, buf.value, class_buf.value))
+            cb = ctypes.create_unicode_buffer(256)
+            user32.GetClassNameW(hwnd, cb, 256)
+            if cb.value in ("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS"):
+                l = user32.GetWindowTextLengthW(hwnd) + 1
+                b = ctypes.create_unicode_buffer(l)
+                user32.GetWindowTextW(hwnd, b, l)
+                p = ctypes.wintypes.DWORD()
+                user32.GetWindowThreadProcessId(hwnd, ctypes.byref(p))
+                results.append((hwnd, p.value, b.value))
         return True
-
-    WNDENUMPROC = ctypes.WINFUNCTYPE(
-        ctypes.c_bool, ctypes.wintypes.HWND, ctypes.wintypes.LPARAM
-    )
+    WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.wintypes.HWND, ctypes.wintypes.LPARAM)
     user32.EnumWindows(WNDENUMPROC(enum_cb), 0)
     return results
 
 
-def get_pinned_hwnd():
+def get_pinned():
     if os.path.exists(HWND_FILE):
         try:
             with open(HWND_FILE) as f:
@@ -58,174 +45,144 @@ def get_pinned_hwnd():
     return None
 
 
-def save_pinned_hwnd(hwnd):
+def save_pinned(hwnd):
     with open(HWND_FILE, "w") as f:
         f.write(str(hwnd))
 
 
-def is_injector_running():
+def is_running():
     if not os.path.exists(PID_FILE):
         return False, None
     try:
         with open(PID_FILE) as f:
             pid = int(f.read().strip())
-        os.kill(pid, 0)
-        return True, pid
-    except (OSError, ValueError):
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        si.wShowWindow = 0
+        r = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+                           capture_output=True, text=True, timeout=5,
+                           startupinfo=si)
+        if str(pid) in r.stdout:
+            return True, pid
+        return False, None
+    except Exception:
         return False, None
 
 
-def inject_test(hwnd):
-    WM_CHAR = 0x0102
-    text = "[Telegram test]: hello from the manager GUI"
-    for ch in text:
-        user32.PostMessageW(hwnd, WM_CHAR, ord(ch), 0)
-    user32.PostMessageW(hwnd, WM_CHAR, 13, 0)
-
-
-class TelegramManager(tk.Tk):
+class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Telegram Bridge Manager")
-        self.geometry("600x450")
-        self.configure(bg="#1e1e2e")
-        self.resizable(False, False)
+        self.title("Telegram Bridge")
+        self.geometry("500x400")
 
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("TFrame", background="#1e1e2e")
-        style.configure("TLabel", background="#1e1e2e", foreground="#cdd6f4", font=("Consolas", 10))
-        style.configure("Header.TLabel", font=("Consolas", 14, "bold"), foreground="#89b4fa")
-        style.configure("Status.TLabel", font=("Consolas", 10))
-        style.configure("TButton", font=("Consolas", 10))
-        style.configure("Treeview", background="#313244", foreground="#cdd6f4",
-                         fieldbackground="#313244", font=("Consolas", 9))
-        style.configure("Treeview.Heading", font=("Consolas", 10, "bold"),
-                         background="#45475a", foreground="#cdd6f4")
+        # Status frame
+        sf = tk.Frame(self, pady=10, padx=10)
+        sf.pack(fill="x")
 
-        # Header
-        header_frame = ttk.Frame(self)
-        header_frame.pack(fill="x", padx=15, pady=(15, 5))
-        ttk.Label(header_frame, text="Telegram Bridge Manager", style="Header.TLabel").pack(side="left")
+        self.daemon_lbl = tk.Label(sf, text="Daemon: checking...", font=("Arial", 12))
+        self.daemon_lbl.pack(anchor="w")
 
-        # Status bar
-        status_frame = ttk.Frame(self)
-        status_frame.pack(fill="x", padx=15, pady=5)
-
-        self.status_label = ttk.Label(status_frame, text="", style="Status.TLabel")
-        self.status_label.pack(side="left")
-
-        self.target_label = ttk.Label(status_frame, text="", style="Status.TLabel")
-        self.target_label.pack(side="right")
-
-        # Window list
-        list_frame = ttk.Frame(self)
-        list_frame.pack(fill="both", expand=True, padx=15, pady=5)
-
-        ttk.Label(list_frame, text="Console Windows (click to pin target):").pack(anchor="w")
-
-        self.tree = ttk.Treeview(list_frame, columns=("hwnd", "pid", "title"), show="headings", height=10)
-        self.tree.heading("hwnd", text="HWND")
-        self.tree.heading("pid", text="PID")
-        self.tree.heading("title", text="Title")
-        self.tree.column("hwnd", width=100)
-        self.tree.column("pid", width=70)
-        self.tree.column("title", width=400)
-        self.tree.pack(fill="both", expand=True, pady=5)
-        self.tree.bind("<Double-1>", self.on_pin_selected)
+        self.target_lbl = tk.Label(sf, text="Target: none", font=("Arial", 12))
+        self.target_lbl.pack(anchor="w")
 
         # Buttons
-        btn_frame = ttk.Frame(self)
-        btn_frame.pack(fill="x", padx=15, pady=(5, 15))
+        bf = tk.Frame(self, padx=10)
+        bf.pack(fill="x")
 
-        ttk.Button(btn_frame, text="Refresh", command=self.refresh).pack(side="left", padx=3)
-        ttk.Button(btn_frame, text="Pin Selected", command=self.pin_selected).pack(side="left", padx=3)
-        ttk.Button(btn_frame, text="Test Inject", command=self.test_inject).pack(side="left", padx=3)
+        tk.Button(bf, text="Start Daemon", font=("Arial", 11), width=14,
+                  command=self.start).pack(side="left", padx=3)
+        tk.Button(bf, text="Stop Daemon", font=("Arial", 11), width=14,
+                  command=self.stop).pack(side="left", padx=3)
+        tk.Button(bf, text="Refresh", font=("Arial", 11), width=10,
+                  command=self.refresh).pack(side="left", padx=3)
+        tk.Button(bf, text="Test", font=("Arial", 11), width=8,
+                  command=self.test).pack(side="left", padx=3)
 
-        self.start_btn = ttk.Button(btn_frame, text="Start Daemon", command=self.start_daemon)
-        self.start_btn.pack(side="right", padx=3)
+        # Window list
+        lf = tk.Frame(self, padx=10, pady=10)
+        lf.pack(fill="both", expand=True)
 
-        self.stop_btn = ttk.Button(btn_frame, text="Stop Daemon", command=self.stop_daemon)
-        self.stop_btn.pack(side="right", padx=3)
+        tk.Label(lf, text="Console Windows (click to pin):", font=("Arial", 11, "bold")).pack(anchor="w")
 
+        self.listbox = tk.Listbox(lf, font=("Consolas", 10), height=12, selectmode="single")
+        self.listbox.pack(fill="both", expand=True, pady=5)
+        self.listbox.bind("<Double-Button-1>", lambda e: self.pin_selected())
+
+        tk.Button(lf, text="Pin Selected", font=("Arial", 11), command=self.pin_selected).pack()
+
+        self.window_data = []
         self.refresh()
         self.auto_refresh()
 
     def refresh(self):
-        # Update window list
-        self.tree.delete(*self.tree.get_children())
-        pinned = get_pinned_hwnd()
-        windows = find_console_windows()
+        self.listbox.delete(0, "end")
+        self.window_data = find_console_windows()
+        pinned = get_pinned()
 
-        for hwnd, pid, title, cls in windows:
-            tag = "pinned" if hwnd == pinned else ""
-            display_title = title[:60]
-            self.tree.insert("", "end", values=(hwnd, pid, display_title), tags=(tag,))
+        for hwnd, pid, title in self.window_data:
+            tag = " << TARGET" if hwnd == pinned else ""
+            display = f"{hwnd}  |  {title[:50]}{tag}"
+            self.listbox.insert("end", display)
+            if hwnd == pinned:
+                self.listbox.itemconfig("end", bg="#d0ffd0")
 
-        self.tree.tag_configure("pinned", background="#45475a", foreground="#a6e3a1")
-
-        # Update status
-        running, pid = is_injector_running()
+        running, pid = is_running()
         if running:
-            self.status_label.config(text=f"Daemon: RUNNING (pid={pid})", foreground="#a6e3a1")
-            self.start_btn.config(state="disabled")
-            self.stop_btn.config(state="normal")
+            self.daemon_lbl.config(text=f"Daemon: RUNNING (pid={pid})", fg="green")
         else:
-            self.status_label.config(text="Daemon: STOPPED", foreground="#f38ba8")
-            self.start_btn.config(state="normal")
-            self.stop_btn.config(state="disabled")
+            self.daemon_lbl.config(text="Daemon: STOPPED", fg="red")
 
         if pinned and user32.IsWindow(pinned):
-            length = user32.GetWindowTextLengthW(pinned) + 1
-            buf = ctypes.create_unicode_buffer(length)
-            user32.GetWindowTextW(pinned, buf, length)
-            self.target_label.config(text=f"Target: {pinned} ({buf.value[:30]})", foreground="#89b4fa")
+            l = user32.GetWindowTextLengthW(pinned) + 1
+            b = ctypes.create_unicode_buffer(l)
+            user32.GetWindowTextW(pinned, b, l)
+            self.target_lbl.config(text=f"Target: {pinned} - {b.value[:40]}", fg="blue")
         else:
-            self.target_label.config(text="Target: none", foreground="#f38ba8")
+            self.target_lbl.config(text="Target: none (pin a window below)", fg="red")
 
     def auto_refresh(self):
         self.refresh()
         self.after(5000, self.auto_refresh)
 
     def pin_selected(self):
-        sel = self.tree.selection()
+        sel = self.listbox.curselection()
         if not sel:
             return
-        hwnd = int(self.tree.item(sel[0])["values"][0])
-        save_pinned_hwnd(hwnd)
+        hwnd = self.window_data[sel[0]][0]
+        save_pinned(hwnd)
         self.refresh()
 
-    def on_pin_selected(self, event):
-        self.pin_selected()
-
-    def test_inject(self):
-        hwnd = get_pinned_hwnd()
-        if not hwnd or not user32.IsWindow(hwnd):
-            messagebox.showwarning("No Target", "Pin a window first.")
-            return
-        inject_test(hwnd)
-
-    def start_daemon(self):
-        python = sys.executable.replace("python.exe", "pythonw.exe")
+    def start(self):
         subprocess.Popen(
-            [python, INJECT_SCRIPT],
+            [PYTHONW, INJECT_SCRIPT],
             cwd=SCRIPT_DIR,
-            creationflags=0x00000008,  # DETACHED_PROCESS
+            creationflags=0x00000008,
         )
         self.after(2000, self.refresh)
 
-    def stop_daemon(self):
-        running, pid = is_injector_running()
+    def stop(self):
+        running, pid = is_running()
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        si.wShowWindow = 0
         if running and pid:
-            try:
-                os.kill(pid, 9)
-            except Exception:
-                pass
+            subprocess.run(["taskkill", "/F", "/PID", str(pid)],
+                           capture_output=True, timeout=5, startupinfo=si)
         if os.path.exists(PID_FILE):
             os.remove(PID_FILE)
         self.after(1000, self.refresh)
 
+    def test(self):
+        hwnd = get_pinned()
+        if not hwnd or not user32.IsWindow(hwnd):
+            messagebox.showwarning("No Target", "Pin a window first.")
+            return
+        WM_CHAR = 0x0102
+        text = "[Telegram test]: hello from manager"
+        for ch in text:
+            user32.PostMessageW(hwnd, WM_CHAR, ord(ch), 0)
+        user32.PostMessageW(hwnd, WM_CHAR, 13, 0)
+
 
 if __name__ == "__main__":
-    app = TelegramManager()
-    app.mainloop()
+    App().mainloop()
