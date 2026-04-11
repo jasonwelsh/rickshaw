@@ -166,6 +166,7 @@ def handle_command(cmd, cmd_raw, engine, brain, backend, mcp, tg_bot):
   /reset            Clear conversation history
   /save [summary]   Save session for later resume
   /resume           Load last session recap
+  /context          Show loaded RICKSHAW.md files
   /tg-setup         Configure Telegram bot
   /tg-send <msg>    Send message to Telegram chat
   /quit             Exit
@@ -230,6 +231,12 @@ def handle_command(cmd, cmd_raw, engine, brain, backend, mcp, tg_bot):
                 print(f"  Next: {', '.join(last['next_steps'])}")
         else:
             print(f"{DIM}No previous session found.{RESET}")
+
+    elif name == "/context":
+        summary = engine.context.summary()
+        print(f"\n{BOLD}Loaded instruction files:{RESET}")
+        print(summary)
+        print()
 
     elif name == "/tg-setup":
         from .telegram import setup_bot

@@ -1,18 +1,21 @@
 """Rickshaw Engine — Agent loop with native tool calling."""
 import json
+import os
 import time
 from datetime import datetime, timezone
 
 from . import config
+from .context import ContextLoader
 from .tools import BUILTIN_TOOLS, ToolExecutor
 
 
 class Engine:
-    def __init__(self, brain, backend, mcp_bridge=None):
+    def __init__(self, brain, backend, mcp_bridge=None, cwd=None):
         self.brain = brain
         self.backend = backend
         self.mcp = mcp_bridge
         self.tool_exec = ToolExecutor(brain)
+        self.context = ContextLoader(cwd=cwd)
         self.session_id = "default"
         self.on_tool_call = None   # callback(tool_name, args, result)
         self.on_thinking = None    # callback(text)
@@ -56,12 +59,17 @@ class Engine:
 
         parts.append(
             "\n## Rules\n"
-            "- Use tools to take action. Don't describe what you would do — do it.\n"
+            "- Use tools to take action. Don't describe what you would do -- do it.\n"
             "- Use remember/recall for anything the user wants persisted.\n"
             "- Be direct. Answer first, explain only if asked.\n"
             "- If a tool errors, report the error concisely.\n"
             "- Never fabricate tool results."
         )
+
+        # Inject RICKSHAW.md context (like Claude's CLAUDE.md)
+        ctx_block = self.context.build_context_block()
+        if ctx_block:
+            parts.append(f"\n{ctx_block}")
 
         return "\n".join(parts)
 
