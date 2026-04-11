@@ -94,3 +94,15 @@
 2026-04-11 16:37:40,720 Injected into hwnd=33952082
 2026-04-11 16:37:47,776 [jason] finallt
 2026-04-11 16:37:47,782 Injected into hwnd=33952082
+2026-04-11 16:38:22,516 [jason] Wait does that mean I can have multiple versions of this running at once using different clawed powershells
+2026-04-11 16:38:22,521 Injected into hwnd=33952082
+2026-04-11 16:38:47,352 [jason] You need to make it so I can attach the bot to the GUI
+2026-04-11 16:38:47,353 Injected into hwnd=33952082
+2026-04-11 16:39:06,439 [jason] So that Powershell Claude bot runs one
+2026-04-11 16:39:06,440 Injected into hwnd=33952082
+2026-04-11 16:39:23,169 [jason] And I could have another one called Powershell Claude bot 2
+2026-04-11 16:39:23,170 Injected into hwnd=33952082
+2026-04-11 16:39:43,376 [jason] So make a settings in the telegram Bridge to include the bot name and code
+2026-04-11 16:39:43,378 Injected into hwnd=33952082
+2026-04-11 16:40:00,318 [jason] And now I can use voice to text just sitting here and never have to touch a keyboard ever again
+2026-04-11 16:40:00,320 Injected into hwnd=33952082
