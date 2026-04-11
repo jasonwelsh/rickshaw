@@ -59,8 +59,25 @@ def send_telegram(token, chat_id, text):
         pass
 
 
+HWND_FILE = os.path.join(SCRIPT_DIR, "claude_hwnd.txt")
+
+
 def find_claude_window():
-    """Find the Claude Code console/terminal window."""
+    """Find the Claude Code window. Prefers pinned hwnd from file."""
+    # Check for pinned hwnd first
+    if os.path.exists(HWND_FILE):
+        try:
+            with open(HWND_FILE, "r") as f:
+                pinned = int(f.read().strip())
+            if user32.IsWindow(pinned):
+                length = user32.GetWindowTextLengthW(pinned) + 1
+                buf = ctypes.create_unicode_buffer(length)
+                user32.GetWindowTextW(pinned, buf, length)
+                return pinned, buf.value
+        except Exception:
+            pass
+
+    # Fallback: scan for Claude windows
     result = []
 
     def enum_cb(hwnd, _):
@@ -69,7 +86,6 @@ def find_claude_window():
             user32.GetClassNameW(hwnd, class_buf, 256)
             win_class = class_buf.value
 
-            # Target console and Windows Terminal windows
             if win_class not in ("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS"):
                 return True
 
@@ -87,7 +103,6 @@ def find_claude_window():
     )
     user32.EnumWindows(WNDENUMPROC(enum_cb), 0)
 
-    # Prefer ConsoleWindowClass over CASCADIA
     for hwnd, title, cls in result:
         if cls == "ConsoleWindowClass":
             return hwnd, title
@@ -97,40 +112,19 @@ def find_claude_window():
 
 
 def type_into_window(hwnd, text):
-    """Bring window to foreground and type text + Enter."""
-    # Save current foreground window to restore later
-    prev_hwnd = user32.GetForegroundWindow()
+    """Send text directly to a window via PostMessage WM_CHAR. No focus change needed."""
+    WM_CHAR = 0x0102
 
-    # Bring Claude window to front
-    user32.SetForegroundWindow(hwnd)
-    time.sleep(0.3)
-
-    # Verify it's actually foreground
-    current = user32.GetForegroundWindow()
-    if current != hwnd:
-        log.warning("Could not bring window to foreground")
+    if not user32.IsWindow(hwnd):
+        log.error(f"Window {hwnd} no longer exists")
         return False
 
-    # Use clipboard paste for reliability (handles special chars)
-    import subprocess
-    # Copy to clipboard via PowerShell
-    safe_text = text.replace("'", "''")
-    subprocess.run(
-        ["powershell", "-Command", f"Set-Clipboard -Value '{safe_text}'"],
-        capture_output=True, timeout=5,
-    )
-    time.sleep(0.1)
+    # Send each character
+    for ch in text:
+        user32.PostMessageW(hwnd, WM_CHAR, ord(ch), 0)
 
-    # Ctrl+V to paste
-    pyautogui.hotkey("ctrl", "v")
-    time.sleep(0.1)
-
-    # Press Enter to submit
-    pyautogui.press("enter")
-    time.sleep(0.2)
-
-    # Restore previous window (optional, comment out if not wanted)
-    # user32.SetForegroundWindow(prev_hwnd)
+    # Send Enter
+    user32.PostMessageW(hwnd, WM_CHAR, 13, 0)
 
     return True
 

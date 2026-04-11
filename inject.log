@@ -1,1 +1,32 @@
 2026-04-11 15:58:50,771 Injector started. Chat ID: 7230448255
+2026-04-11 15:59:44,825 [jason] inject this
+2026-04-11 15:59:45,127 Could not bring window to foreground
+2026-04-11 15:59:45,127 Injection failed
+2026-04-11 16:00:37,789 [jason] here is another
+2026-04-11 16:00:38,091 Could not bring window to foreground
+2026-04-11 16:00:38,091 Injection failed
+2026-04-11 16:00:44,810 Injector started. Chat ID: 7230448255
+2026-04-11 16:00:58,624 [jason] another test
+2026-04-11 16:00:58,833 Error: exception: access violation writing 0x0000000000000000
+2026-04-11 16:01:34,938 [jason] another test i am not seeing anything in telegram
+2026-04-11 16:01:35,141 Error: exception: access violation writing 0x0000000000000000
+2026-04-11 16:05:04,231 Injector started. Chat ID: 7230448255
+2026-04-11 16:06:51,913 [jason] did you get this
+2026-04-11 16:06:53,868 Injected into: ✳ Claude Code
+2026-04-11 16:07:06,129 [jason] test
+2026-04-11 16:07:07,611 Injected into: ✳ Claude Code
+2026-04-11 16:07:18,860 [jason] test the inject
+2026-04-11 16:07:19,967 Injected into: ✳ Claude Code
+2026-04-11 16:09:24,701 Injector started. Chat ID: 7230448255
+2026-04-11 16:09:28,083 [jason] test out the inject
+2026-04-11 16:09:29,945 Injected into: ✳ Claude Code
+2026-04-11 16:10:27,398 [jason] test 1234
+2026-04-11 16:10:29,225 Injected into: ✳ Claude Code
+2026-04-11 16:13:57,103 Injector started. Chat ID: 7230448255
+2026-04-11 16:16:06,044 [jason] test
+2026-04-11 16:16:06,045 Clipboard error: exception: access violation writing 0x0000000000000000
+2026-04-11 16:16:06,045 Injection failed
+2026-04-11 16:16:18,713 [jason] test 1234
+2026-04-11 16:16:18,713 Clipboard error: exception: access violation writing 0x0000000000000000
+2026-04-11 16:16:18,713 Injection failed
+2026-04-11 16:16:28,138 Injector started. Chat ID: 7230448255
