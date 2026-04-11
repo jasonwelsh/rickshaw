@@ -7,3 +7,6 @@ telegram_inbox.txt
 telegram_outbox.txt
 bridge.log
 inbox_daemon.log
+inject.log
+inject.pid
+claude_hwnd.txt

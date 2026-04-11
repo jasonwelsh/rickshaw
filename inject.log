@@ -30,3 +30,15 @@
 2026-04-11 16:16:18,713 Clipboard error: exception: access violation writing 0x0000000000000000
 2026-04-11 16:16:18,713 Injection failed
 2026-04-11 16:16:28,138 Injector started. Chat ID: 7230448255
+2026-04-11 16:16:55,306 [jason] test 1234
+2026-04-11 16:16:55,306 Injected into: ✳ Research newest LLMs for local harness development
+2026-04-11 16:17:02,433 [jason] Oh my god it worked
+2026-04-11 16:17:02,436 Injected into: ⠂ Research newest LLMs for local harness development
+2026-04-11 16:17:16,310 [jason] I can type to you in Telegram
+2026-04-11 16:17:16,312 Injected into: ⠂ Research newest LLMs for local harness development
+2026-04-11 16:17:36,697 [jason] Okay now it's your job to tighten this up and make it easy to manage
+2026-04-11 16:17:36,699 Injected into: ✳ Research newest LLMs for local harness development
+2026-04-11 16:17:53,949 [jason] Make a way to tag the ID of the window and maybe some kind of gooey or something
+2026-04-11 16:17:53,950 Injected into: ⠂ Research newest LLMs for local harness development
+2026-04-11 16:20:21,325 Target: hwnd=33952082 title="⠂ Research newest LLMs for local harness development"
+2026-04-11 16:20:21,325 Injector started (pid=37532, chat_id=7230448255)
