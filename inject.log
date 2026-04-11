@@ -106,3 +106,13 @@
 2026-04-11 16:39:43,378 Injected into hwnd=33952082
 2026-04-11 16:40:00,318 [jason] And now I can use voice to text just sitting here and never have to touch a keyboard ever again
 2026-04-11 16:40:00,320 Injected into hwnd=33952082
+2026-04-11 16:43:47,329 [jason] Well let's see if it works still
+2026-04-11 16:43:47,330 Injected into hwnd=33952082
+2026-04-11 16:43:54,489 [jason] Yes commit to everything
+2026-04-11 16:43:54,490 Injected into hwnd=33952082
+2026-04-11 16:44:11,231 [jason] Get it documented into memory and make sure you wrap up the mCP tools to support it
+2026-04-11 16:44:11,232 Injected into hwnd=33952082
+2026-04-11 16:44:50,232 [jason] Also this is probably good enough to release so make sure we get ourselves a GitHub version of this
+2026-04-11 16:44:50,234 Injected into hwnd=33952082
+2026-04-11 16:45:54,355 [jason] So will this also work on a Mac using terminal probably not
+2026-04-11 16:45:54,356 Injected into hwnd=33952082
