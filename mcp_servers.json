@@ -1,4 +1,16 @@
 {
   "mcpServers": {
+    "ha-tools": {
+      "command": "python",
+      "args": ["C:\\Users\\jasonwelsh\\taproot-ha\\mcp_ha_tools.py"]
+    },
+    "esphome": {
+      "command": "python",
+      "args": ["C:\\Users\\jasonwelsh\\taproot-ha\\esphome\\mcp_esphome.py"]
+    },
+    "hw-planner": {
+      "command": "python",
+      "args": ["C:\\Users\\jasonwelsh\\taproot-ha\\mcp_hw_planner.py"]
+    }
   }
 }

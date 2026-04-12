@@ -30,27 +30,23 @@ class MCPServer:
         return self._id
 
     def _write(self, msg):
-        body = json.dumps(msg).encode("utf-8")
-        header = f"Content-Length: {len(body)}\r\n\r\n".encode("utf-8")
-        self.process.stdin.write(header + body)
+        line = json.dumps(msg) + "\n"
+        self.process.stdin.write(line.encode("utf-8"))
         self.process.stdin.flush()
 
     def _read(self):
-        """Read one JSON-RPC message from stdout."""
-        # Read headers
-        content_length = 0
+        """Read one JSON-RPC message from stdout (newline-delimited JSON)."""
         while True:
             line = self.process.stdout.readline()
-            if not line or line in (b"\r\n", b"\n"):
-                break
-            decoded = line.decode("utf-8").strip()
-            if decoded.lower().startswith("content-length:"):
-                content_length = int(decoded.split(":", 1)[1].strip())
-
-        if content_length == 0:
-            return None
-        body = self.process.stdout.read(content_length)
-        return json.loads(body.decode("utf-8"))
+            if not line:
+                return None
+            line = line.decode("utf-8").strip()
+            if not line:
+                continue
+            try:
+                return json.loads(line)
+            except json.JSONDecodeError:
+                continue  # skip non-JSON lines
 
     def _request(self, method, params=None):
         """Send a JSON-RPC request and wait for the matching response."""
@@ -75,6 +71,9 @@ class MCPServer:
         if params is not None:
             msg["params"] = params
         self._write(msg)
+        # Small delay to let server process
+        import time
+        time.sleep(0.1)
 
     def _initialize(self):
         resp = self._request("initialize", {
