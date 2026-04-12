@@ -11,3 +11,5 @@ inject.log
 inject.pid
 claude_hwnd.txt
 inject.log
+rickshaw.pid
+rickshaw_service.log
