@@ -13,3 +13,4 @@ claude_hwnd.txt
 inject.log
 rickshaw.pid
 rickshaw_service.log
+trader/trader_config.json

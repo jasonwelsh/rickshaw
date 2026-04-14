@@ -11,6 +11,10 @@
     "hw-planner": {
       "command": "python",
       "args": ["C:\\Users\\jasonwelsh\\taproot-ha\\mcp_hw_planner.py"]
+    },
+    "trader": {
+      "command": "python",
+      "args": ["C:\\Users\\jasonwelsh\\rickshaw\\trader\\mcp_trader.py"]
     }
   }
 }
