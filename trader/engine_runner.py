@@ -214,6 +214,9 @@ def main():
 
     cycle = 0
     market_was_open = False
+    SLEEP_MARKET_OPEN = args.interval        # 5 min during market
+    SLEEP_MARKET_CLOSED = 60                 # 1 min when closed (just checking clock)
+    SLEEP_OVERNIGHT = 300                    # 5 min overnight (next check: is it morning yet?)
 
     while True:
         cycle += 1
@@ -221,17 +224,17 @@ def main():
         try:
             market_open = is_market_open()
 
-            # Market just opened
+            # ── Market just opened ────────────────────────────
             if market_open and not market_was_open:
                 log.info("Market opened!")
                 if tg_token:
                     send_heartbeat(tg_token, tg_chat, "[Engine] Market opened. Strategies activating.")
+                write_heartbeat_file("MARKET OPEN", "Market just opened. Engine active.")
                 market_was_open = True
 
-            # Market just closed
+            # ── Market just closed ────────────────────────────
             if not market_open and market_was_open:
                 log.info("Market closed.")
-                # Send end-of-day summary
                 account = trader.get_account()
                 positions = trader.get_positions()
                 from trader.strategies import get_pnl_summary
@@ -247,17 +250,25 @@ def main():
 
                 if tg_token:
                     send_heartbeat(tg_token, tg_chat, eod)
+                write_heartbeat_file("MARKET CLOSED", eod.replace("\n", " | "))
                 log.info(eod)
                 market_was_open = False
 
+            # ── Market closed — sleep longer ──────────────────
             if not market_open:
-                time.sleep(args.interval)
+                # Check what hour it is to decide sleep duration
+                hour = datetime.now().hour
+                if 7 <= hour <= 17:
+                    # Near market hours — check frequently for open
+                    time.sleep(SLEEP_MARKET_CLOSED)
+                else:
+                    # Overnight — sleep longer
+                    time.sleep(SLEEP_OVERNIGHT)
                 continue
 
-            # Run engine tick
+            # ── Market open — run engine tick ─────────────────
             results = tick(trader)
 
-            # Log actions
             for r in results:
                 for a in r["actions"]:
                     log.info(f"[{r['strategy']}] {a['msg']}")
@@ -271,14 +282,11 @@ def main():
                 positions = trader.get_positions()
                 active = len(get_strategies(status="active")) + len(get_strategies(status="pending_fill"))
 
-                # Short format for Claude's terminal (injected via PostMessage)
                 prompt_msg = format_heartbeat(cycle, results, account, positions, active)
-                # Long format for Telegram (readable on phone)
                 tg_msg = format_heartbeat_telegram(cycle, results, account, positions, active)
 
                 log.info(tg_msg)
 
-                # Write to bridge GUI heartbeat file
                 portfolio = float(account.get("portfolio_value", 0))
                 pl = sum(float(p.get("unrealized_pl", 0)) for p in positions) if positions else 0
                 write_heartbeat_file(
@@ -297,7 +305,7 @@ def main():
             if tg_token:
                 send_heartbeat(tg_token, tg_chat, f"[Engine ERROR] {e}")
 
-        time.sleep(args.interval)
+        time.sleep(SLEEP_MARKET_OPEN)
 
     # Cleanup
     if os.path.exists(PID_FILE):
