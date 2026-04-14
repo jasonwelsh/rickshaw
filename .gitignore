@@ -14,3 +14,5 @@ inject.log
 rickshaw.pid
 rickshaw_service.log
 trader/trader_config.json
+strategies.json
+trade_log.json

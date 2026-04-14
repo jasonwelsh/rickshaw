@@ -250,6 +250,135 @@ def cmd_trades():
         print(json.dumps(result, indent=2)[:1000])
 
 
+def cmd_trailing_stop(symbol, qty, stop_pct=10, trail_pct=5, ladders=""):
+    from trader.strategies import create_trailing_stop
+    trader, _ = load_trader()
+
+    ladder_drops = []
+    if ladders:
+        for pair in ladders.split(","):
+            parts = pair.strip().split(":")
+            if len(parts) == 2:
+                ladder_drops.append((float(parts[0]), int(parts[1])))
+
+    print(f"{DIM}Creating trailing stop on {symbol}...{RESET}")
+    result = create_trailing_stop(
+        trader, symbol.upper(), int(qty),
+        stop_pct=float(stop_pct), trail_pct=float(trail_pct),
+        ladder_drops=ladder_drops,
+    )
+    if "error" in result:
+        print(f"{RED}{result['error']}{RESET}")
+    else:
+        print(f"{GREEN}Strategy {result['id']} created:{RESET}")
+        print(f"  {result['log'][0]['msg']}")
+        if ladder_drops:
+            print(f"  Ladders: {ladder_drops}")
+
+
+def cmd_copy_trade(politician, max_per_trade=5000):
+    from trader.strategies import create_copy_strategy
+    trader, _ = load_trader()
+    print(f"{DIM}Creating copy strategy for {politician}...{RESET}")
+    result = create_copy_strategy(trader, politician, max_per_trade=float(max_per_trade))
+    print(f"{GREEN}Strategy {result['id']} created:{RESET}")
+    print(f"  {result['log'][0]['msg']}")
+
+
+def cmd_strategies():
+    from trader.strategies import get_strategies
+    strategies = get_strategies()
+    if not strategies:
+        print(f"{DIM}No strategies.{RESET}")
+        return
+    print(f"\n{BOLD}Strategies{RESET}")
+    for s in strategies:
+        color = GREEN if s["status"] == "active" else DIM
+        state = s.get("state", {})
+        extra = ""
+        if s["type"] == "trailing_stop":
+            floor = state.get("current_floor", 0)
+            high = state.get("highest_price", 0)
+            qty = state.get("total_qty", 0)
+            extra = f"floor=${floor:,.2f} high=${high:,.2f} qty={qty}"
+        elif s["type"] == "copy_trade":
+            extra = f"politician={s['config'].get('politician','?')}"
+        print(f"  {color}{s['id']:<20} {s['type']:<15} {s['status']:<10} {extra}{RESET}")
+    print()
+
+
+def cmd_strategy_log(strategy_id):
+    from trader.strategies import get_strategy
+    s = get_strategy(strategy_id)
+    if not s:
+        print(f"{RED}Strategy {strategy_id} not found.{RESET}")
+        return
+    print(f"\n{BOLD}Log for {s['id']} ({s['type']}, {s['status']}){RESET}")
+    for entry in s.get("log", []):
+        print(f"  {entry['time'][:19]} | {entry['msg']}")
+    print()
+
+
+def cmd_engine_tick():
+    from trader.strategies import tick
+    trader, _ = load_trader()
+    print(f"{DIM}Running strategy check...{RESET}")
+    results = tick(trader)
+    if not results:
+        print(f"{DIM}No actions taken.{RESET}")
+    else:
+        for r in results:
+            for a in r["actions"]:
+                color = GREEN if "buy" in a.get("action", "") else (RED if "sell" in a.get("action", "") else YELLOW)
+                print(f"  {color}[{r['strategy']}] {a['msg']}{RESET}")
+
+
+def cmd_pnl():
+    from trader.strategies import get_pnl_summary
+    s = get_pnl_summary()
+    print(f"\n{BOLD}P&L Summary{RESET}")
+    print(f"  Total trades: {s['total_trades']}")
+    print(f"  Buys: {s['buys']}")
+    print(f"  Sells: {s['sells']}")
+    pnl = s['realized_pnl']
+    color = GREEN if pnl >= 0 else RED
+    print(f"  Realized P&L: {color}${pnl:+,.2f}{RESET}")
+    if s.get("last_trade"):
+        lt = s["last_trade"]
+        print(f"  Last: {lt['action']} {lt.get('symbol','')} @ {lt['time'][:19]}")
+    print()
+
+
+def cmd_engine_run(interval=300):
+    from trader.strategies import tick
+    trader, _ = load_trader()
+    print(f"{BOLD}Strategy engine running{RESET} (checking every {interval}s)")
+    print(f"{DIM}Ctrl+C to stop{RESET}\n")
+    try:
+        while True:
+            results = tick(trader)
+            ts = time.strftime("%H:%M:%S")
+            if results:
+                for r in results:
+                    for a in r["actions"]:
+                        color = GREEN if "buy" in a.get("action", "") else (RED if "sell" in a.get("action", "") else YELLOW)
+                        print(f"  {ts} {color}[{r['strategy']}] {a['msg']}{RESET}")
+            else:
+                print(f"  {ts} {DIM}no actions{RESET}")
+            time.sleep(interval)
+    except KeyboardInterrupt:
+        print(f"\n{DIM}Engine stopped.{RESET}")
+
+
+def cmd_cancel_strategy(strategy_id):
+    from trader.strategies import cancel_strategy
+    result = cancel_strategy(strategy_id)
+    if result:
+        print(f"{GREEN}Cancelled {strategy_id}{RESET}")
+    else:
+        print(f"{RED}Strategy {strategy_id} not found.{RESET}")
+
+
 def _print_order(o):
     side_color = GREEN if o.get('side') == 'buy' else RED
     print(f"  {side_color}{o.get('side','?'):>4}{RESET} {o.get('qty','?')}x {BOLD}{o.get('symbol','?')}{RESET} "
@@ -273,7 +402,8 @@ def repl():
         print(f"{RED}Connection error: {e}{RESET}")
         return
 
-    print(f"{DIM}Commands: buy, sell, quote, positions, orders, cancel, close, watch, politicians, trades, account, help, quit{RESET}\n")
+    print(f"{DIM}Commands: buy, sell, quote, positions, orders, cancel, close, watch,{RESET}")
+    print(f"{DIM}  trailing, copy, strategies, tick, run, pnl, politicians, trades, help, quit{RESET}\n")
 
     while True:
         try:
@@ -292,17 +422,26 @@ def repl():
                 break
             elif cmd == "help":
                 print(f"""
-  buy <SYM> <QTY> [limit <PRICE>] [stop <PRICE>] [trail <PCT>]
-  sell <SYM> <QTY> [limit <PRICE>] [stop <PRICE>] [trail <PCT>]
-  quote <SYM> [SYM2 ...]
-  positions
-  orders [all]
-  cancel [ORDER_ID]
-  close [SYM]
+  {BOLD}Trading:{RESET}
+  buy <SYM> <QTY> [limit <P>] [stop <P>] [trail <PCT>]
+  sell <SYM> <QTY> [limit <P>] [stop <P>] [trail <PCT>]
+  quote <SYM> [SYM2 ...]     positions       orders [all]
+  cancel [ORDER_ID]           close [SYM]     account
   watch <SYM> [SYM2 ...] [interval <SEC>]
-  politicians
-  trades
-  account
+
+  {BOLD}Strategies:{RESET}
+  trailing <SYM> <QTY> [stop <PCT>] [trail <PCT>] [ladders <drop:qty,...>]
+  copy <POLITICIAN_SLUG> [MAX_PER_TRADE]
+  strategies                  list all strategies
+  log <STRATEGY_ID>           show strategy log
+  stop <STRATEGY_ID>          cancel a strategy
+  tick                        run one check cycle
+  run [INTERVAL_SEC]          run engine loop (default 300s)
+  pnl                         P&L summary
+
+  {BOLD}Data:{RESET}
+  politicians                 top trading politicians
+  trades                      recent politician trades
 """)
             elif cmd == "account":
                 cmd_account()
@@ -337,6 +476,37 @@ def repl():
                         syms.append(parts[i])
                         i += 1
                 cmd_watch(syms, interval)
+            elif cmd == "trailing" and len(parts) >= 3:
+                stop = 10
+                trail = 5
+                ladders = ""
+                i = 3
+                while i < len(parts):
+                    if parts[i] == "stop" and i+1 < len(parts):
+                        stop = parts[i+1]; i += 2
+                    elif parts[i] == "trail" and i+1 < len(parts):
+                        trail = parts[i+1]; i += 2
+                    elif parts[i] == "ladders" and i+1 < len(parts):
+                        ladders = parts[i+1]; i += 2
+                    else:
+                        i += 1
+                cmd_trailing_stop(parts[1], parts[2], stop, trail, ladders)
+            elif cmd == "copy" and len(parts) >= 2:
+                max_t = parts[2] if len(parts) > 2 else 5000
+                cmd_copy_trade(parts[1], max_t)
+            elif cmd == "strategies" or cmd == "strats":
+                cmd_strategies()
+            elif cmd == "log" and len(parts) >= 2:
+                cmd_strategy_log(parts[1])
+            elif cmd == "tick":
+                cmd_engine_tick()
+            elif cmd == "run":
+                interval = int(parts[1]) if len(parts) > 1 else 300
+                cmd_engine_run(interval)
+            elif cmd == "pnl":
+                cmd_pnl()
+            elif cmd == "stop" and len(parts) >= 2:
+                cmd_cancel_strategy(parts[1])
             elif cmd == "politicians":
                 cmd_politicians()
             elif cmd == "trades":
