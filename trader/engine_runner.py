@@ -212,6 +212,8 @@ def main():
                        f"[Engine] Started. Checking every {args.interval}s. "
                        f"Heartbeat every {args.heartbeat_every} cycles.")
 
+    last_screen_date = None  # Track daily screener run
+
     cycle = 0
     market_was_open = False
     SLEEP_MARKET_OPEN = args.interval        # 5 min during market
@@ -223,6 +225,26 @@ def main():
 
         try:
             market_open = is_market_open()
+
+            # ── Daily screener (runs once at market open) ─────
+            today = datetime.now().strftime("%Y-%m-%d")
+            if market_open and last_screen_date != today:
+                last_screen_date = today
+                try:
+                    from trader.screener import auto_deploy
+                    log.info("Running daily screener...")
+                    result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
+                                         max_positions=8)
+                    if result["status"] == "deployed" and result.get("picks"):
+                        picks_msg = ", ".join(f"{p['symbol']}(score={p['score']})" for p in result["picks"])
+                        msg = f"[Screener] Auto-deployed: {picks_msg}"
+                        log.info(msg)
+                        if tg_token:
+                            send_heartbeat(tg_token, tg_chat, msg)
+                    else:
+                        log.info(f"[Screener] {result.get('msg', 'No new picks')}")
+                except Exception as e:
+                    log.error(f"Screener error: {e}")
 
             # ── Market just opened ────────────────────────────
             if market_open and not market_was_open:
