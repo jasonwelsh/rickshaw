@@ -50,8 +50,8 @@ class TraderApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Rickshaw Trader")
-        self.geometry("700x650")
-        self.minsize(650, 550)
+        self.geometry("700x750")
+        self.minsize(650, 650)
         self.trader = load_trader()
 
         # ── Account Bar ──────────────────────────────────────────
@@ -159,8 +159,8 @@ class TraderApp(tk.Tk):
         tk.Button(wl_btn, text="Buy Selected", font=("Arial", 10), command=self.buy_from_watchlist).pack(side="left", padx=3)
 
         # ── Research Pane (toggle) ───────────────────────────────
-        research_toggle = tk.Frame(self, padx=10)
-        research_toggle.pack(fill="x", pady=3)
+        research_toggle = tk.LabelFrame(self, text="Research", font=("Arial", 11, "bold"), padx=10, pady=5)
+        research_toggle.pack(fill="x", padx=10, pady=3)
 
         self.research_visible = tk.BooleanVar(value=False)
         tk.Checkbutton(research_toggle, text="Show Research", variable=self.research_visible,
