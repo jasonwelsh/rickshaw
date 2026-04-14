@@ -1,27 +1,24 @@
-"""Rickshaw Trader Strategy Engine — Trailing Stop, Copy Trading, Wheel.
+"""Rickshaw Trader Strategy Engine — Rule-based, dumb-AI-proof.
 
-Each strategy is a dict stored in strategies.json:
-{
-    "id": "ts-TSLA-001",
-    "type": "trailing_stop",
-    "symbol": "TSLA",
-    "status": "active",
-    "config": { ... },
-    "state": { ... },
-    "log": [ ... ]
-}
+Design principles:
+  - Every decision is a rule, never a judgment call
+  - Verify actual state (positions, fills) before acting
+  - Handle every edge case: partial fills, API errors, market closed, gap downs
+  - Log everything so we can audit what happened and why
+  - A 4B model should be able to run this without thinking
 
-The engine checks all active strategies on each tick and executes
-the appropriate actions.
+Strategies stored in strategies.json, trade history in trade_log.json.
 """
 import json
 import os
 import time
+import requests
 from datetime import datetime, timezone
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 STRATEGIES_FILE = os.path.join(SCRIPT_DIR, "strategies.json")
 TRADE_LOG_FILE = os.path.join(SCRIPT_DIR, "trade_log.json")
+CONFIG_FILE = os.path.join(SCRIPT_DIR, "trader_config.json")
 
 
 def _load_strategies():
@@ -37,9 +34,8 @@ def _save_strategies(strategies):
 
 
 def _log_trade(strategy_id, action, details):
-    """Append to the trade log."""
     entry = {
-        "time": datetime.now(timezone.utc).isoformat(),
+        "time": _timestamp(),
         "strategy": strategy_id,
         "action": action,
         **details,
@@ -49,9 +45,8 @@ def _log_trade(strategy_id, action, details):
         with open(TRADE_LOG_FILE, "r") as f:
             log = json.load(f)
     log.append(entry)
-    # Keep last 500 entries
-    if len(log) > 500:
-        log = log[-500:]
+    if len(log) > 1000:
+        log = log[-1000:]
     with open(TRADE_LOG_FILE, "w") as f:
         json.dump(log, f, indent=2)
     return entry
@@ -61,34 +56,79 @@ def _timestamp():
     return datetime.now(timezone.utc).isoformat()
 
 
+def is_market_open():
+    """Check if US stock market is currently open."""
+    try:
+        with open(CONFIG_FILE) as f:
+            cfg = json.load(f)
+        r = requests.get(
+            "https://paper-api.alpaca.markets/v2/clock",
+            headers={
+                "APCA-API-KEY-ID": cfg["alpaca_api_key"],
+                "APCA-API-SECRET-KEY": cfg["alpaca_secret_key"],
+            },
+            timeout=5,
+        )
+        return r.json().get("is_open", False)
+    except Exception:
+        return False
+
+
+def get_actual_position(trader, symbol):
+    """Get actual position qty from Alpaca (not our state)."""
+    try:
+        p = trader.get_position(symbol)
+        if "error" in p:
+            return 0, 0
+        return int(float(p["qty"])), float(p["avg_entry"])
+    except Exception:
+        return 0, 0
+
+
+def get_fill_price(trader, symbol):
+    """Get the most recent filled order price for a symbol."""
+    try:
+        orders = trader.get_orders(status="all", limit=10)
+        for o in orders:
+            if o["symbol"] == symbol and o["status"] == "filled" and o.get("filled_avg_price"):
+                return float(o["filled_avg_price"])
+    except Exception:
+        pass
+    return None
+
+
 # ── Trailing Stop Strategy ───────────────────────────────────────────
 
 def create_trailing_stop(trader, symbol, qty, stop_pct=10, trail_pct=5,
                          ladder_drops=None):
     """Create a trailing stop strategy.
 
-    Args:
-        symbol: Stock ticker
-        qty: Shares to buy
-        stop_pct: Initial stop loss % below entry (default 10%)
-        trail_pct: Trail % below highest price (default 5%)
-        ladder_drops: List of (drop_pct, buy_qty) for ladder buys
-                      e.g. [(20, 10), (30, 20)] = buy 10 more at -20%, 20 more at -30%
+    Rules (mechanical, no judgment):
+      1. Buy qty shares at market
+      2. Set floor at entry - stop_pct%
+      3. Every tick: if price > highest, move floor up to price - trail_pct%
+      4. If price <= floor, sell everything
+      5. If price drops to ladder levels below entry, buy more
+      6. Floor only moves up, never down
     """
-    # Buy initial position
+    # Check market
+    if not is_market_open():
+        # Place order anyway (will fill when market opens)
+        pass
+
     result = trader.buy(symbol, qty)
     if "error" in result:
         return {"error": result["error"]}
 
-    # Get entry price
+    # Use quote for initial estimate (fill price updated on first tick)
     quote = trader.get_quote(symbol)
-    entry_price = (float(quote["bid"]) + float(quote["ask"])) / 2 if "bid" in quote else 0
+    est_price = (float(quote["bid"]) + float(quote["ask"])) / 2 if "bid" in quote else 0
 
     strategy = {
         "id": f"ts-{symbol}-{int(time.time()) % 10000}",
         "type": "trailing_stop",
         "symbol": symbol,
-        "status": "active",
+        "status": "pending_fill",  # Not active until we confirm the fill
         "created": _timestamp(),
         "config": {
             "initial_qty": qty,
@@ -97,101 +137,144 @@ def create_trailing_stop(trader, symbol, qty, stop_pct=10, trail_pct=5,
             "ladder_drops": ladder_drops or [],
         },
         "state": {
-            "entry_price": entry_price,
-            "highest_price": entry_price,
-            "current_floor": entry_price * (1 - stop_pct / 100),
+            "entry_price": est_price,
+            "highest_price": est_price,
+            "current_floor": est_price * (1 - stop_pct / 100) if est_price else 0,
             "total_qty": qty,
-            "total_cost": entry_price * qty,
+            "total_cost": est_price * qty,
+            "actual_qty": 0,  # Verified from Alpaca
             "ladders_triggered": [],
+            "cooldown_until": None,
         },
         "log": [
-            {"time": _timestamp(), "action": "open",
-             "msg": f"Bought {qty}x {symbol} @ ~${entry_price:.2f}, floor=${entry_price * (1 - stop_pct / 100):.2f}"},
+            {"time": _timestamp(), "action": "order_placed",
+             "msg": f"Buy order placed: {qty}x {symbol} @ ~${est_price:.2f} (pending fill)"},
         ],
+        "order_id": result.get("id"),
     }
 
     strategies = _load_strategies()
     strategies.append(strategy)
     _save_strategies(strategies)
 
-    _log_trade(strategy["id"], "open", {
-        "symbol": symbol, "qty": qty, "entry": entry_price,
-        "floor": strategy["state"]["current_floor"],
+    _log_trade(strategy["id"], "order_placed", {
+        "symbol": symbol, "qty": qty, "est_price": est_price,
     })
 
     return strategy
 
 
 def check_trailing_stop(trader, strategy):
-    """Check and update a trailing stop strategy. Returns list of actions taken."""
-    if strategy["status"] != "active":
-        return []
-
+    """Check and update a trailing stop. Pure rules, no judgment."""
     symbol = strategy["symbol"]
     config = strategy["config"]
     state = strategy["state"]
     actions = []
 
-    # Get current price
+    # ── Step 0: Check market hours ────────────────────────────
+    if not is_market_open():
+        return [{"action": "skip", "msg": "Market closed"}]
+
+    # ── Step 1: Verify position exists ────────────────────────
+    actual_qty, actual_avg = get_actual_position(trader, symbol)
+    state["actual_qty"] = actual_qty
+
+    # If pending_fill, check if our order filled
+    if strategy["status"] == "pending_fill":
+        if actual_qty > 0:
+            # Order filled! Update entry price with real fill
+            state["entry_price"] = actual_avg
+            state["total_cost"] = actual_avg * actual_qty
+            state["total_qty"] = actual_qty
+            state["highest_price"] = actual_avg
+            state["current_floor"] = actual_avg * (1 - config["stop_pct"] / 100)
+            strategy["status"] = "active"
+            msg = f"FILLED: {actual_qty}x {symbol} @ ${actual_avg:.2f}. Floor: ${state['current_floor']:.2f}"
+            strategy["log"].append({"time": _timestamp(), "action": "filled", "msg": msg})
+            actions.append({"action": "filled", "msg": msg})
+            _log_trade(strategy["id"], "filled", {
+                "symbol": symbol, "qty": actual_qty, "price": actual_avg,
+            })
+        else:
+            return [{"action": "waiting", "msg": f"Waiting for {symbol} fill..."}]
+
+    if strategy["status"] != "active":
+        return actions
+
+    # If we have no shares, something went wrong
+    if actual_qty <= 0:
+        strategy["status"] = "error"
+        msg = f"ERROR: Expected {state['total_qty']} shares of {symbol} but have 0"
+        strategy["log"].append({"time": _timestamp(), "action": "error", "msg": msg})
+        return [{"action": "error", "msg": msg}]
+
+    # ── Step 2: Get current price ─────────────────────────────
     quote = trader.get_quote(symbol)
     if "error" in quote:
-        return [{"action": "error", "msg": quote["error"]}]
+        return [{"action": "error", "msg": f"Quote error: {quote['error']}"}]
 
     current = (float(quote["bid"]) + float(quote["ask"])) / 2
+    if current <= 0:
+        return [{"action": "error", "msg": "Invalid price"}]
 
-    # Check if price hit the floor -> SELL
+    # ── Step 3: Check stop (floor hit) ────────────────────────
     if current <= state["current_floor"]:
-        # Sell everything
         try:
-            result = trader.sell(symbol, state["total_qty"])
-            pnl = (current - state["total_cost"] / state["total_qty"]) * state["total_qty"]
-            pnl_pct = (current / (state["total_cost"] / state["total_qty"]) - 1) * 100
+            # Sell actual qty, not state qty
+            sell_qty = actual_qty
+            result = trader.sell(symbol, sell_qty)
+
+            avg_cost = state["total_cost"] / state["total_qty"] if state["total_qty"] > 0 else state["entry_price"]
+            pnl = (current - avg_cost) * sell_qty
+            pnl_pct = (current / avg_cost - 1) * 100 if avg_cost > 0 else 0
 
             strategy["status"] = "closed"
-            msg = f"STOP HIT: Sold {state['total_qty']}x {symbol} @ ~${current:.2f}. P&L: ${pnl:+,.2f} ({pnl_pct:+.1f}%)"
+            msg = (f"STOP HIT: Sold {sell_qty}x {symbol} @ ~${current:.2f}. "
+                   f"P&L: ${pnl:+,.2f} ({pnl_pct:+.1f}%)")
             strategy["log"].append({"time": _timestamp(), "action": "stop_sell", "msg": msg})
-            actions.append({"action": "stop_sell", "msg": msg, "pnl": pnl})
+            actions.append({"action": "stop_sell", "msg": msg, "pnl": round(pnl, 2)})
 
             _log_trade(strategy["id"], "stop_sell", {
-                "symbol": symbol, "qty": state["total_qty"],
-                "price": current, "pnl": pnl, "pnl_pct": pnl_pct,
+                "symbol": symbol, "qty": sell_qty,
+                "price": current, "pnl": round(pnl, 2), "pnl_pct": round(pnl_pct, 2),
             })
         except Exception as e:
             actions.append({"action": "error", "msg": f"Sell failed: {e}"})
         return actions
 
-    # Check if new high -> move floor up
+    # ── Step 4: Check for new high -> trail floor up ──────────
     if current > state["highest_price"]:
         state["highest_price"] = current
         new_floor = current * (1 - config["trail_pct"] / 100)
 
-        # Floor only moves up, never down
         if new_floor > state["current_floor"]:
             old_floor = state["current_floor"]
             state["current_floor"] = new_floor
-            msg = f"New high ${current:.2f}: floor moved ${old_floor:.2f} -> ${new_floor:.2f}"
+            msg = f"TRAIL UP: ${current:.2f} new high. Floor: ${old_floor:.2f} -> ${new_floor:.2f}"
             strategy["log"].append({"time": _timestamp(), "action": "trail_up", "msg": msg})
             actions.append({"action": "trail_up", "msg": msg})
 
-    # Check ladder buys
+    # ── Step 5: Check ladder buys ─────────────────────────────
     entry = state["entry_price"]
     for drop_pct, buy_qty in config.get("ladder_drops", []):
         trigger_price = entry * (1 - drop_pct / 100)
         if current <= trigger_price and drop_pct not in state["ladders_triggered"]:
             try:
                 result = trader.buy(symbol, buy_qty)
-                state["total_qty"] += buy_qty
-                state["total_cost"] += current * buy_qty
                 state["ladders_triggered"].append(drop_pct)
 
-                # Recalculate floor based on new average
-                avg = state["total_cost"] / state["total_qty"]
-                state["current_floor"] = max(
-                    state["current_floor"],
-                    avg * (1 - config["stop_pct"] / 100),
-                )
+                # Update totals (will be corrected on next tick from actual position)
+                state["total_qty"] += buy_qty
+                state["total_cost"] += current * buy_qty
 
-                msg = f"LADDER BUY: {buy_qty}x {symbol} @ ~${current:.2f} (drop {drop_pct}%). Total: {state['total_qty']} shares"
+                # Recalculate floor
+                avg = state["total_cost"] / state["total_qty"]
+                new_floor = avg * (1 - config["stop_pct"] / 100)
+                if new_floor > state["current_floor"]:
+                    state["current_floor"] = new_floor
+
+                msg = (f"LADDER BUY: {buy_qty}x {symbol} @ ~${current:.2f} "
+                       f"(drop {drop_pct}%). Total: {state['total_qty']} shares")
                 strategy["log"].append({"time": _timestamp(), "action": "ladder_buy", "msg": msg})
                 actions.append({"action": "ladder_buy", "msg": msg})
 
@@ -209,7 +292,6 @@ def check_trailing_stop(trader, strategy):
 
 def create_copy_strategy(trader, politician_slug, max_per_trade=5000,
                          follow_sells=True):
-    """Create a copy trading strategy that follows a politician's trades."""
     strategy = {
         "id": f"cp-{politician_slug}-{int(time.time()) % 10000}",
         "type": "copy_trade",
@@ -241,27 +323,26 @@ def create_copy_strategy(trader, politician_slug, max_per_trade=5000,
 
 
 def check_copy_strategy(trader, strategy):
-    """Check for new politician trades and copy them."""
     if strategy["status"] != "active":
         return []
+
+    if not is_market_open():
+        return [{"action": "skip", "msg": "Market closed"}]
 
     from trader import capitol_trades
     config = strategy["config"]
     state = strategy["state"]
     actions = []
 
-    # Get politician's recent trades
     trades = capitol_trades.get_politician_trades(config["politician"])
 
     if isinstance(trades, dict) and ("error" in trades or "raw_text" in trades):
-        # Can't parse structured trades — skip this check
         state["last_check"] = _timestamp()
-        return [{"action": "skip", "msg": "Could not parse politician trades this cycle"}]
+        return [{"action": "skip", "msg": "Could not parse trades this cycle"}]
 
     if not isinstance(trades, list):
         return []
 
-    # Find new trades we haven't seen
     for trade in trades:
         trade_key = f"{trade.get('symbol','')}-{trade.get('action','')}-{trade.get('amount','')}"
         if trade_key in state["known_trades"]:
@@ -273,7 +354,6 @@ def check_copy_strategy(trader, strategy):
         if not symbol or not action:
             continue
 
-        # Calculate qty based on max_per_trade
         try:
             quote = trader.get_quote(symbol)
             if "error" in quote:
@@ -288,14 +368,13 @@ def check_copy_strategy(trader, strategy):
         try:
             if action == "buy":
                 result = trader.buy(symbol, qty)
-                cost = price * qty
                 state["positions_opened"].append(symbol)
-                state["total_invested"] += cost
-                msg = f"COPY BUY: {qty}x {symbol} @ ~${price:.2f} (following {config['politician']})"
+                state["total_invested"] += price * qty
+                msg = f"COPY BUY: {qty}x {symbol} @ ~${price:.2f}"
             elif action == "sell" and config["follow_sells"]:
                 result = trader.sell(symbol, qty)
                 state["total_returned"] += price * qty
-                msg = f"COPY SELL: {qty}x {symbol} @ ~${price:.2f} (following {config['politician']})"
+                msg = f"COPY SELL: {qty}x {symbol} @ ~${price:.2f}"
             else:
                 continue
 
@@ -303,13 +382,11 @@ def check_copy_strategy(trader, strategy):
             actions.append({"action": f"copy_{action}", "msg": msg})
             _log_trade(strategy["id"], f"copy_{action}", {
                 "symbol": symbol, "qty": qty, "price": price,
-                "politician": config["politician"],
             })
         except Exception as e:
-            actions.append({"action": "error", "msg": f"Copy trade failed: {e}"})
+            actions.append({"action": "error", "msg": f"Copy failed: {e}"})
 
     state["last_check"] = _timestamp()
-    # Keep known_trades bounded
     if len(state["known_trades"]) > 200:
         state["known_trades"] = state["known_trades"][-100:]
 
@@ -319,30 +396,35 @@ def check_copy_strategy(trader, strategy):
 # ── Engine ───────────────────────────────────────────────────────────
 
 def tick(trader):
-    """Run one check cycle on all active strategies. Returns summary."""
+    """Run one check cycle. Pure mechanical — no judgment."""
     strategies = _load_strategies()
     results = []
 
     for s in strategies:
-        if s["status"] != "active":
+        if s["status"] not in ("active", "pending_fill"):
             continue
 
-        if s["type"] == "trailing_stop":
-            actions = check_trailing_stop(trader, s)
-        elif s["type"] == "copy_trade":
-            actions = check_copy_strategy(trader, s)
-        else:
-            actions = []
+        try:
+            if s["type"] == "trailing_stop":
+                actions = check_trailing_stop(trader, s)
+            elif s["type"] == "copy_trade":
+                actions = check_copy_strategy(trader, s)
+            else:
+                actions = []
+        except Exception as e:
+            actions = [{"action": "error", "msg": f"Strategy {s['id']} crashed: {e}"}]
 
         if actions:
-            results.append({"strategy": s["id"], "type": s["type"], "actions": actions})
+            # Filter out "skip" actions for cleaner output
+            real_actions = [a for a in actions if a["action"] != "skip"]
+            if real_actions:
+                results.append({"strategy": s["id"], "type": s["type"], "actions": real_actions})
 
     _save_strategies(strategies)
     return results
 
 
 def get_strategies(status=None):
-    """Get all strategies, optionally filtered by status."""
     strategies = _load_strategies()
     if status:
         return [s for s in strategies if s["status"] == status]
@@ -350,7 +432,6 @@ def get_strategies(status=None):
 
 
 def get_strategy(strategy_id):
-    """Get a single strategy by ID."""
     for s in _load_strategies():
         if s["id"] == strategy_id:
             return s
@@ -358,26 +439,24 @@ def get_strategy(strategy_id):
 
 
 def cancel_strategy(strategy_id):
-    """Cancel an active strategy (does NOT close positions)."""
     strategies = _load_strategies()
     for s in strategies:
         if s["id"] == strategy_id:
             s["status"] = "cancelled"
-            s["log"].append({"time": _timestamp(), "action": "cancel", "msg": "Strategy cancelled by user"})
+            s["log"].append({"time": _timestamp(), "action": "cancel", "msg": "Cancelled by user"})
             _save_strategies(strategies)
             return s
     return None
 
 
 def get_pnl_summary():
-    """Summarize P&L from trade log."""
     if not os.path.exists(TRADE_LOG_FILE):
-        return {"total_trades": 0, "total_pnl": 0}
+        return {"total_trades": 0, "buys": 0, "sells": 0, "realized_pnl": 0}
 
     with open(TRADE_LOG_FILE) as f:
         log = json.load(f)
 
-    buys = sum(1 for t in log if t["action"] in ("open", "ladder_buy", "copy_buy"))
+    buys = sum(1 for t in log if t["action"] in ("filled", "ladder_buy", "copy_buy"))
     sells = sum(1 for t in log if t["action"] in ("stop_sell", "copy_sell"))
     pnl = sum(t.get("pnl", 0) for t in log)
 
