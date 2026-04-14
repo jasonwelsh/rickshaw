@@ -27,7 +27,7 @@ PARENT_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, PARENT_DIR)
 
 CONFIG_FILE = os.path.join(SCRIPT_DIR, "trader_config.json")
-TG_CONFIG = os.path.join(PARENT_DIR, "telegram-to-powershell", "config.json")
+TG_CONFIG = os.path.join(os.path.expanduser("~"), "telegram-to-powershell", "config.json")
 # Also check local rickshaw config for telegram
 RICKSHAW_DB = os.path.join(PARENT_DIR, "rickshaw.db")
 LOG_FILE = os.path.join(SCRIPT_DIR, "engine.log")
@@ -71,6 +71,9 @@ def load_tg_config():
     return None, None
 
 
+HEARTBEAT_FILE = os.path.join(os.path.expanduser("~"), "telegram-to-powershell", "heartbeats.json")
+
+
 def send_heartbeat(token, chat_id, message):
     """Send heartbeat to Telegram."""
     if not token or not chat_id:
@@ -85,34 +88,87 @@ def send_heartbeat(token, chat_id, message):
         log.error(f"Heartbeat send failed: {e}")
 
 
+def write_heartbeat_file(status, message=""):
+    """Write heartbeat to the bridge GUI's heartbeat file."""
+    import time as t
+    beats = {}
+    if os.path.exists(HEARTBEAT_FILE):
+        try:
+            with open(HEARTBEAT_FILE, "r") as f:
+                beats = json.load(f)
+        except Exception:
+            pass
+    beats["trader-engine"] = {
+        "status": status,
+        "message": message[:200],
+        "time": t.time(),
+        "time_str": t.strftime("%H:%M:%S"),
+    }
+    try:
+        with open(HEARTBEAT_FILE, "w") as f:
+            json.dump(beats, f, indent=2)
+    except Exception:
+        pass
+
+
 def format_heartbeat(cycle, results, account, positions, strategies_active):
-    """Format a heartbeat message."""
+    """Format a heartbeat as a status report prompt for Claude."""
+    ts = datetime.now().strftime("%H:%M:%S")
+    cash = float(account.get("cash", 0))
+    portfolio = float(account.get("portfolio_value", 0))
+
+    parts = [f"[TRADER HEARTBEAT {ts} cycle#{cycle}]"]
+    parts.append(f"Portfolio: ${portfolio:,.0f} Cash: ${cash:,.0f}")
+
+    if positions:
+        total_pl = sum(float(p.get("unrealized_pl", 0)) for p in positions)
+        pos_details = []
+        for p in positions:
+            sym = p["symbol"]
+            pl = float(p["unrealized_pl"])
+            plpc = float(p["unrealized_plpc"]) * 100
+            pos_details.append(f"{sym}:{pl:+.0f}({plpc:+.1f}%)")
+        parts.append(f"P&L: ${total_pl:+,.2f} [{' '.join(pos_details)}]")
+
+    parts.append(f"Strategies: {strategies_active} active")
+
+    if results:
+        for r in results:
+            for a in r["actions"]:
+                parts.append(f"ACTION: [{r['strategy']}] {a['msg']}")
+
+    # The prompt — tells Claude what to do with this info
+    parts.append("If anything needs attention, respond now. Otherwise ignore.")
+
+    return " | ".join(parts)
+
+
+def format_heartbeat_telegram(cycle, results, account, positions, strategies_active):
+    """Longer format for Telegram (more readable on phone)."""
     ts = datetime.now().strftime("%H:%M:%S")
     lines = [f"[Engine {ts}] cycle #{cycle}"]
 
-    # Account summary
     cash = float(account.get("cash", 0))
     portfolio = float(account.get("portfolio_value", 0))
     lines.append(f"Portfolio: ${portfolio:,.0f} | Cash: ${cash:,.0f}")
 
-    # Positions summary
     if positions:
         total_pl = sum(float(p.get("unrealized_pl", 0)) for p in positions)
-        lines.append(f"Positions: {len(positions)} | Unrealized P&L: ${total_pl:+,.2f}")
+        lines.append(f"Positions: {len(positions)} | P&L: ${total_pl:+,.2f}")
+        for p in positions:
+            pl = float(p["unrealized_pl"])
+            plpc = float(p["unrealized_plpc"]) * 100
+            lines.append(f"  {p['symbol']}: {p['qty']} shares ${pl:+,.2f} ({plpc:+.1f}%)")
     else:
         lines.append("Positions: none")
 
-    # Active strategies
     lines.append(f"Strategies: {strategies_active} active")
 
-    # Actions this cycle
     if results:
         lines.append("Actions:")
         for r in results:
             for a in r["actions"]:
                 lines.append(f"  [{r['strategy']}] {a['msg']}")
-    else:
-        lines.append("No actions this cycle.")
 
     return "\n".join(lines)
 
@@ -215,11 +271,23 @@ def main():
                 positions = trader.get_positions()
                 active = len(get_strategies(status="active")) + len(get_strategies(status="pending_fill"))
 
-                msg = format_heartbeat(cycle, results, account, positions, active)
-                log.info(msg)
+                # Short format for Claude's terminal (injected via PostMessage)
+                prompt_msg = format_heartbeat(cycle, results, account, positions, active)
+                # Long format for Telegram (readable on phone)
+                tg_msg = format_heartbeat_telegram(cycle, results, account, positions, active)
+
+                log.info(tg_msg)
+
+                # Write to bridge GUI heartbeat file
+                portfolio = float(account.get("portfolio_value", 0))
+                pl = sum(float(p.get("unrealized_pl", 0)) for p in positions) if positions else 0
+                write_heartbeat_file(
+                    f"${portfolio:,.0f} P&L:${pl:+,.0f}",
+                    prompt_msg,
+                )
 
                 if tg_token and (has_actions or should_heartbeat):
-                    send_heartbeat(tg_token, tg_chat, msg)
+                    send_heartbeat(tg_token, tg_chat, tg_msg)
 
         except KeyboardInterrupt:
             log.info("Shutting down...")
