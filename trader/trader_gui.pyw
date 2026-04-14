@@ -138,16 +138,48 @@ class TraderApp(tk.Tk):
 
         # ── Watchlist ────────────────────────────────────────────
         wl_frame = tk.LabelFrame(self, text="Watchlist", font=("Arial", 11, "bold"), padx=10, pady=5)
-        wl_frame.pack(fill="both", expand=True, padx=10, pady=(3, 10))
+        wl_frame.pack(fill="x", padx=10, pady=3)
 
-        self.wl_list = tk.Listbox(wl_frame, font=("Consolas", 10), height=4)
-        self.wl_list.pack(fill="both", expand=True, pady=3)
+        wl_cols = ("symbol", "price", "reason", "added")
+        self.wl_tree = ttk.Treeview(wl_frame, columns=wl_cols, show="headings", height=3)
+        self.wl_tree.heading("symbol", text="Symbol")
+        self.wl_tree.heading("price", text="Price")
+        self.wl_tree.heading("reason", text="Reason")
+        self.wl_tree.heading("added", text="Added")
+        self.wl_tree.column("symbol", width=60)
+        self.wl_tree.column("price", width=80)
+        self.wl_tree.column("reason", width=350)
+        self.wl_tree.column("added", width=80)
+        self.wl_tree.pack(fill="x", pady=3)
 
         wl_btn = tk.Frame(wl_frame)
         wl_btn.pack(fill="x")
         tk.Button(wl_btn, text="Add", font=("Arial", 10), command=self.add_watchlist).pack(side="left", padx=3)
         tk.Button(wl_btn, text="Remove", font=("Arial", 10), command=self.rm_watchlist).pack(side="left", padx=3)
+        tk.Button(wl_btn, text="Buy Selected", font=("Arial", 10), command=self.buy_from_watchlist).pack(side="left", padx=3)
 
+        # ── Research Pane (toggle) ───────────────────────────────
+        research_toggle = tk.Frame(self, padx=10)
+        research_toggle.pack(fill="x", pady=3)
+
+        self.research_visible = tk.BooleanVar(value=False)
+        tk.Checkbutton(research_toggle, text="Show Research", variable=self.research_visible,
+                       font=("Arial", 11, "bold"), command=self.toggle_research).pack(side="left")
+        tk.Button(research_toggle, text="Force Research Now", font=("Arial", 10),
+                  command=self.force_research).pack(side="right", padx=3)
+        self.research_brain = tk.StringVar(value="qwen")
+        tk.OptionMenu(research_toggle, self.research_brain, "qwen", "opus").pack(side="right", padx=3)
+        tk.Label(research_toggle, text="Brain:", font=("Arial", 10)).pack(side="right")
+
+        self.research_frame = tk.LabelFrame(self, text="Latest Research Report",
+                                             font=("Arial", 11, "bold"), padx=10, pady=5)
+        self.research_text = tk.Text(self.research_frame, font=("Consolas", 9),
+                                     height=10, wrap="word", state="disabled")
+        self.research_text.pack(fill="both", expand=True, pady=3)
+        # Hidden by default
+        self.research_frame.pack_forget()
+
+        self.wl_data = []
         self.refresh()
         self.auto_refresh()
 
@@ -213,14 +245,28 @@ class TraderApp(tk.Tk):
             self.start_eng_btn.config(state="normal")
             self.stop_eng_btn.config(state="disabled")
 
-        # Watchlist
-        self.wl_list.delete(0, "end")
+        # Watchlist with live quotes
+        self.wl_tree.delete(*self.wl_tree.get_children())
         wl_file = os.path.join(SCRIPT_DIR, "watchlist.json")
+        self.wl_data = []
         if os.path.exists(wl_file):
             with open(wl_file) as f:
-                wl = json.load(f)
-            for w in wl:
-                self.wl_list.insert("end", f"  {w['symbol']:5s}  {w.get('reason', '')}")
+                self.wl_data = json.load(f)
+            for w in self.wl_data:
+                price = ""
+                try:
+                    q = self.trader.get_quote(w["symbol"])
+                    if "bid" in q:
+                        price = f"${(float(q['bid']) + float(q['ask'])) / 2:,.2f}"
+                except Exception:
+                    pass
+                self.wl_tree.insert("", "end", values=(
+                    w["symbol"], price, w.get("reason", ""), w.get("added", ""),
+                ))
+
+        # Load last research if pane is visible
+        if self.research_visible.get():
+            self._load_last_research()
 
     def auto_refresh(self):
         self.refresh()
@@ -268,20 +314,55 @@ class TraderApp(tk.Tk):
         self.refresh()
 
     def run_research(self):
+        self.force_research()
+
+    def toggle_research(self):
+        if self.research_visible.get():
+            self.research_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+            self._load_last_research()
+        else:
+            self.research_frame.pack_forget()
+
+    def _load_last_research(self):
+        from trader.research import get_last_research
+        last = get_last_research()
+        self.research_text.config(state="normal")
+        self.research_text.delete("1.0", "end")
+        if last:
+            header = f"[{last.get('session', '?').upper()}] {last.get('time', '?')[:19]} ({last.get('mode', '?')} brain)\n\n"
+            self.research_text.insert("1.0", header + last.get("report", "No report"))
+        else:
+            self.research_text.insert("1.0", "No research reports yet. Click 'Force Research Now'.")
+        self.research_text.config(state="disabled")
+
+    def force_research(self):
+        brain = self.research_brain.get()
+        self.research_text.config(state="normal")
+        self.research_text.delete("1.0", "end")
+        self.research_text.insert("1.0", f"Running {brain} research...")
+        self.research_text.config(state="disabled")
+
+        # Show pane if hidden
+        if not self.research_visible.get():
+            self.research_visible.set(True)
+            self.research_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+
+        self.update()
+
         try:
             from trader.research import run_research
-            result = run_research(self.trader, "midday", "qwen")
-            report = result.get("report", "No report")
-            # Show in a popup
-            win = tk.Toplevel(self)
-            win.title("Research Report")
-            win.geometry("600x400")
-            text = tk.Text(win, font=("Consolas", 10), wrap="word")
-            text.pack(fill="both", expand=True, padx=10, pady=10)
-            text.insert("1.0", report)
-            text.config(state="disabled")
+            result = run_research(self.trader, "midday", brain)
+            self.research_text.config(state="normal")
+            self.research_text.delete("1.0", "end")
+            report = result.get("report", "No report generated")
+            header = f"[MIDDAY] {result.get('time', '?')[:19]} ({brain} brain)\n\n"
+            self.research_text.insert("1.0", header + report)
+            self.research_text.config(state="disabled")
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            self.research_text.config(state="normal")
+            self.research_text.delete("1.0", "end")
+            self.research_text.insert("1.0", f"Error: {e}")
+            self.research_text.config(state="disabled")
 
     def add_watchlist(self):
         symbol = simpledialog.askstring("Add to Watchlist", "Symbol:", parent=self)
@@ -290,20 +371,45 @@ class TraderApp(tk.Tk):
         reason = simpledialog.askstring("Reason", f"Why watch {symbol.upper()}?", parent=self) or ""
         from trader.research import load_watchlist, save_watchlist
         wl = load_watchlist()
+        if any(w["symbol"] == symbol.upper() for w in wl):
+            return
         wl.append({"symbol": symbol.upper(), "reason": reason, "added": time.strftime("%Y-%m-%d")})
         save_watchlist(wl)
         self.refresh()
 
     def rm_watchlist(self):
-        sel = self.wl_list.curselection()
+        sel = self.wl_tree.selection()
         if not sel:
             return
+        idx = self.wl_tree.index(sel[0])
         from trader.research import load_watchlist, save_watchlist
         wl = load_watchlist()
-        if sel[0] < len(wl):
-            wl.pop(sel[0])
+        if idx < len(wl):
+            wl.pop(idx)
             save_watchlist(wl)
             self.refresh()
+
+    def buy_from_watchlist(self):
+        sel = self.wl_tree.selection()
+        if not sel:
+            return
+        idx = self.wl_tree.index(sel[0])
+        if idx >= len(self.wl_data):
+            return
+        symbol = self.wl_data[idx]["symbol"]
+        qty = simpledialog.askinteger("Buy", f"How many shares of {symbol}?", parent=self, minvalue=1)
+        if not qty:
+            return
+        try:
+            from trader.strategies import create_trailing_stop
+            result = create_trailing_stop(self.trader, symbol, qty)
+            if "error" in result:
+                messagebox.showerror("Error", result["error"])
+            else:
+                messagebox.showinfo("Created", f"Trailing stop {result['id']} on {symbol}")
+                self.refresh()
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
 
 if __name__ == "__main__":
