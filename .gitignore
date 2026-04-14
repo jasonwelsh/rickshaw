@@ -19,3 +19,4 @@ trade_log.json
 trader/brain_config.json
 trader/engine.log
 trader/engine.pid
+trader/screener_log.json

@@ -370,6 +370,36 @@ def cmd_engine_run(interval=300):
         print(f"\n{DIM}Engine stopped.{RESET}")
 
 
+def cmd_screen():
+    from trader.screener import run_screen
+    trader, cfg = load_trader()
+    print(f"{DIM}Screening 60 stocks across 6 sectors...{RESET}\n")
+    picks = run_screen(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"], top_n=10)
+    print(f"{BOLD}{'Rank':<5} {'Symbol':<7} {'Sector':<12} {'Price':>8} {'Score':>6}  {'Mom5':>4} {'Mom20':>5} {'Sprd':>4} {'Sect':>4}{RESET}")
+    print(f"  {'-'*60}")
+    for i, p in enumerate(picks, 1):
+        s = p["scores"]
+        color = GREEN if p["score"] >= 65 else (YELLOW if p["score"] >= 50 else DIM)
+        print(f"{color}  {i:<4} {p['symbol']:<7} {p['sector']:<12} ${p['price']:>7,.2f} {p['score']:>5.1f}  "
+              f"{s['momentum_5d']:>4} {s['momentum_20d']:>5} {s['spread']:>4} {s['sector_balance']:>4}{RESET}")
+    print()
+
+
+def cmd_autodeploy(max_positions=8):
+    from trader.screener import auto_deploy
+    trader, cfg = load_trader()
+    print(f"{DIM}Auto-deploying (max {max_positions} positions)...{RESET}")
+    result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
+                         max_positions=max_positions)
+    if result["status"] == "full":
+        print(f"{YELLOW}{result['msg']}{RESET}")
+        return
+    for d in result.get("picks", []):
+        print(f"  {GREEN}DEPLOYED{RESET} {d['symbol']} ({d['sector']}) "
+              f"score={d['score']} qty={d['qty']} -> {d['strategy_id']}")
+    print(f"\n{DIM}Slots: {result.get('slots_used', 0)} used, {result.get('slots_remaining', 0)} remaining{RESET}")
+
+
 def cmd_research(session_type="midday", brain="qwen"):
     from trader.research import run_research
     trader, _ = load_trader()
@@ -494,6 +524,10 @@ def repl():
   run [INTERVAL_SEC]          run engine loop (default 300s)
   pnl                         P&L summary
 
+  {BOLD}Screener:{RESET}
+  screen                      scan 60 stocks, rank by score
+  auto [MAX_POSITIONS]        screen + auto-deploy top picks
+
   {BOLD}Research:{RESET}
   research [pre_market|midday|after_hours] [qwen|opus]
   watchlist                   show watchlist with live quotes
@@ -568,6 +602,11 @@ def repl():
                 cmd_pnl()
             elif cmd == "stop" and len(parts) >= 2:
                 cmd_cancel_strategy(parts[1])
+            elif cmd == "screen":
+                cmd_screen()
+            elif cmd == "autodeploy" or cmd == "auto":
+                max_pos = int(parts[1]) if len(parts) > 1 else 8
+                cmd_autodeploy(max_pos)
             elif cmd == "research":
                 session = parts[1] if len(parts) > 1 else "midday"
                 brain = parts[2] if len(parts) > 2 else "qwen"
