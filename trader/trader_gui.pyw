@@ -336,33 +336,34 @@ class TraderApp(tk.Tk):
         self.research_text.config(state="disabled")
 
     def force_research(self):
+        import threading
         brain = self.research_brain.get()
         self.research_text.config(state="normal")
         self.research_text.delete("1.0", "end")
-        self.research_text.insert("1.0", f"Running {brain} research...")
+        self.research_text.insert("1.0", f"Running {brain} research (this takes a minute)...")
         self.research_text.config(state="disabled")
 
-        # Show pane if hidden
         if not self.research_visible.get():
             self.research_visible.set(True)
             self.research_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
-        self.update()
+        def _run():
+            try:
+                from trader.research import run_research
+                result = run_research(self.trader, "midday", brain)
+                report = result.get("report", "No report generated")
+                header = f"[MIDDAY] {result.get('time', '?')[:19]} ({brain} brain)\n\n"
+                self.after(0, lambda: self._show_research(header + report))
+            except Exception as e:
+                self.after(0, lambda: self._show_research(f"Error: {e}"))
 
-        try:
-            from trader.research import run_research
-            result = run_research(self.trader, "midday", brain)
-            self.research_text.config(state="normal")
-            self.research_text.delete("1.0", "end")
-            report = result.get("report", "No report generated")
-            header = f"[MIDDAY] {result.get('time', '?')[:19]} ({brain} brain)\n\n"
-            self.research_text.insert("1.0", header + report)
-            self.research_text.config(state="disabled")
-        except Exception as e:
-            self.research_text.config(state="normal")
-            self.research_text.delete("1.0", "end")
-            self.research_text.insert("1.0", f"Error: {e}")
-            self.research_text.config(state="disabled")
+        threading.Thread(target=_run, daemon=True).start()
+
+    def _show_research(self, text):
+        self.research_text.config(state="normal")
+        self.research_text.delete("1.0", "end")
+        self.research_text.insert("1.0", text)
+        self.research_text.config(state="disabled")
 
     def add_watchlist(self):
         symbol = simpledialog.askstring("Add to Watchlist", "Symbol:", parent=self)
