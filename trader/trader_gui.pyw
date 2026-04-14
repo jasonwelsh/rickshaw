@@ -51,11 +51,36 @@ class TraderApp(tk.Tk):
         super().__init__()
         self.title("Rickshaw Trader")
         self.geometry("700x750")
-        self.minsize(650, 650)
+        self.minsize(650, 550)
         self.trader = load_trader()
 
+        # ── Scrollable container ─────────────────────────────────
+        outer = tk.Frame(self)
+        outer.pack(fill="both", expand=True)
+
+        canvas = tk.Canvas(outer)
+        scrollbar = tk.Scrollbar(outer, orient="vertical", command=canvas.yview)
+        self.scroll_frame = tk.Frame(canvas)
+
+        self.scroll_frame.bind("<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        canvas.create_window((0, 0), window=self.scroll_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Mouse wheel scrolling
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+        # All widgets go into self.scroll_frame instead of self
+        sf = self.scroll_frame
+
         # ── Account Bar ──────────────────────────────────────────
-        acct_frame = tk.Frame(self, pady=5, padx=10)
+        acct_frame = tk.Frame(sf, pady=5, padx=10)
         acct_frame.pack(fill="x")
 
         self.acct_lbl = tk.Label(acct_frame, text="Loading...", font=("Arial", 14, "bold"))
@@ -68,7 +93,7 @@ class TraderApp(tk.Tk):
         self.mode_lbl.pack(side="right")
 
         # ── Engine Controls ──────────────────────────────────────
-        engine_frame = tk.LabelFrame(self, text="Engine", font=("Arial", 11, "bold"), padx=10, pady=5)
+        engine_frame = tk.LabelFrame(sf, text="Engine", font=("Arial", 11, "bold"), padx=10, pady=5)
         engine_frame.pack(fill="x", padx=10, pady=3)
 
         self.engine_lbl = tk.Label(engine_frame, text="...", font=("Arial", 11))
@@ -88,7 +113,7 @@ class TraderApp(tk.Tk):
         self.start_eng_btn.pack(side="right", padx=3)
 
         # ── Positions ────────────────────────────────────────────
-        pos_frame = tk.LabelFrame(self, text="Positions", font=("Arial", 11, "bold"), padx=10, pady=5)
+        pos_frame = tk.LabelFrame(sf, text="Positions", font=("Arial", 11, "bold"), padx=10, pady=5)
         pos_frame.pack(fill="x", padx=10, pady=3)
 
         cols = ("symbol", "qty", "entry", "current", "pl", "pl_pct")
@@ -109,7 +134,7 @@ class TraderApp(tk.Tk):
         self.pos_tree.pack(fill="x")
 
         # ── Strategies ───────────────────────────────────────────
-        strat_frame = tk.LabelFrame(self, text="Strategies", font=("Arial", 11, "bold"), padx=10, pady=5)
+        strat_frame = tk.LabelFrame(sf, text="Strategies", font=("Arial", 11, "bold"), padx=10, pady=5)
         strat_frame.pack(fill="x", padx=10, pady=3)
 
         strat_cols = ("id", "symbol", "type", "status", "floor", "high")
@@ -137,7 +162,7 @@ class TraderApp(tk.Tk):
                   command=self.cancel_selected_strategy).pack(side="left", padx=3)
 
         # ── Watchlist ────────────────────────────────────────────
-        wl_frame = tk.LabelFrame(self, text="Watchlist", font=("Arial", 11, "bold"), padx=10, pady=5)
+        wl_frame = tk.LabelFrame(sf, text="Watchlist", font=("Arial", 11, "bold"), padx=10, pady=5)
         wl_frame.pack(fill="x", padx=10, pady=3)
 
         wl_cols = ("symbol", "price", "reason", "added")
@@ -159,7 +184,7 @@ class TraderApp(tk.Tk):
         tk.Button(wl_btn, text="Buy Selected", font=("Arial", 10), command=self.buy_from_watchlist).pack(side="left", padx=3)
 
         # ── Research Pane (toggle) ───────────────────────────────
-        research_toggle = tk.LabelFrame(self, text="Research", font=("Arial", 11, "bold"), padx=10, pady=5)
+        research_toggle = tk.LabelFrame(sf, text="Research", font=("Arial", 11, "bold"), padx=10, pady=5)
         research_toggle.pack(fill="x", padx=10, pady=3)
 
         self.research_visible = tk.BooleanVar(value=False)
@@ -171,7 +196,7 @@ class TraderApp(tk.Tk):
         tk.OptionMenu(research_toggle, self.research_brain, "qwen", "opus").pack(side="right", padx=3)
         tk.Label(research_toggle, text="Brain:", font=("Arial", 10)).pack(side="right")
 
-        self.research_frame = tk.LabelFrame(self, text="Latest Research Report",
+        self.research_frame = tk.LabelFrame(sf, text="Latest Research Report",
                                              font=("Arial", 11, "bold"), padx=10, pady=5)
         self.research_text = tk.Text(self.research_frame, font=("Consolas", 9),
                                      height=10, wrap="word", state="disabled")
