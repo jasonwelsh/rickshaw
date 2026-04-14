@@ -134,6 +134,7 @@ def create_trailing_stop(trader, symbol, qty, stop_pct=10, trail_pct=5,
             "initial_qty": qty,
             "stop_pct": stop_pct,
             "trail_pct": trail_pct,
+            "take_profit_pct": 15,
             "ladder_drops": ladder_drops or [],
         },
         "state": {
@@ -144,6 +145,7 @@ def create_trailing_stop(trader, symbol, qty, stop_pct=10, trail_pct=5,
             "total_cost": est_price * qty,
             "actual_qty": 0,  # Verified from Alpaca
             "ladders_triggered": [],
+            "profit_taken": False,
             "cooldown_until": None,
         },
         "log": [
@@ -241,6 +243,33 @@ def check_trailing_stop(trader, strategy):
         except Exception as e:
             actions.append({"action": "error", "msg": f"Sell failed: {e}"})
         return actions
+
+    # ── Step 3.5: Take profit if up enough ──────────────────
+    take_profit_pct = config.get("take_profit_pct", 15)
+    avg_cost = state["total_cost"] / state["total_qty"] if state["total_qty"] > 0 else state["entry_price"]
+    gain_pct = (current / avg_cost - 1) * 100 if avg_cost > 0 else 0
+
+    if gain_pct >= take_profit_pct and not state.get("profit_taken"):
+        # Sell half to lock in gains
+        sell_qty = max(1, actual_qty // 2)
+        try:
+            result = trader.sell(symbol, sell_qty)
+            pnl = (current - avg_cost) * sell_qty
+            state["profit_taken"] = True
+            state["total_qty"] -= sell_qty
+            state["total_cost"] -= avg_cost * sell_qty
+
+            msg = (f"PROFIT TAKE: Sold {sell_qty}x {symbol} @ ~${current:.2f} "
+                   f"(+{gain_pct:.1f}%). Locked ${pnl:+,.2f}. Riding {actual_qty - sell_qty} remaining.")
+            strategy["log"].append({"time": _timestamp(), "action": "take_profit", "msg": msg})
+            actions.append({"action": "take_profit", "msg": msg, "pnl": round(pnl, 2)})
+
+            _log_trade(strategy["id"], "take_profit", {
+                "symbol": symbol, "qty": sell_qty, "price": current,
+                "pnl": round(pnl, 2), "gain_pct": round(gain_pct, 2),
+            })
+        except Exception as e:
+            actions.append({"action": "error", "msg": f"Profit take failed: {e}"})
 
     # ── Step 4: Check for new high -> trail floor up ──────────
     if current > state["highest_price"]:
