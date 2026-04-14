@@ -17,3 +17,5 @@ trader/trader_config.json
 strategies.json
 trade_log.json
 trader/brain_config.json
+trader/engine.log
+trader/engine.pid
