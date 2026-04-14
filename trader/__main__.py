@@ -370,6 +370,61 @@ def cmd_engine_run(interval=300):
         print(f"\n{DIM}Engine stopped.{RESET}")
 
 
+def cmd_research(session_type="midday", brain="qwen"):
+    from trader.research import run_research
+    trader, _ = load_trader()
+    print(f"{DIM}Running {session_type} research ({brain} brain)...{RESET}\n")
+    result = run_research(trader, session_type=session_type, brain_mode=brain)
+
+    if result["mode"] == "opus":
+        # Print the prompt for Claude to analyze
+        print(f"{BOLD}=== RESEARCH PROMPT (for Opus) ==={RESET}")
+        print(result["report"])
+        print(f"{BOLD}=== END PROMPT ==={RESET}\n")
+    else:
+        print(f"{BOLD}=== {session_type.upper()} RESEARCH REPORT ==={RESET}")
+        print(result["report"])
+        print(f"{BOLD}=== END REPORT ==={RESET}\n")
+
+
+def cmd_watchlist_show():
+    from trader.research import load_watchlist
+    wl = load_watchlist()
+    if not wl:
+        print(f"{DIM}Watchlist empty. Use: watchlist add AAPL \"reason\"{RESET}")
+        return
+    trader, _ = load_trader()
+    for w in wl:
+        sym = w.get("symbol", "?")
+        reason = w.get("reason", "")
+        try:
+            q = trader.get_quote(sym)
+            price = (float(q["bid"]) + float(q["ask"])) / 2 if "bid" in q else 0
+            print(f"  {BOLD}{sym:5s}{RESET} ${price:>8,.2f}  {DIM}{reason}{RESET}")
+        except Exception:
+            print(f"  {BOLD}{sym:5s}{RESET}  {DIM}{reason}{RESET}")
+
+
+def cmd_watchlist_add(symbol, reason=""):
+    from trader.research import load_watchlist, save_watchlist
+    wl = load_watchlist()
+    # Don't duplicate
+    if any(w["symbol"] == symbol.upper() for w in wl):
+        print(f"{DIM}{symbol} already on watchlist{RESET}")
+        return
+    wl.append({"symbol": symbol.upper(), "reason": reason, "added": time.strftime("%Y-%m-%d")})
+    save_watchlist(wl)
+    print(f"{GREEN}Added {symbol.upper()} to watchlist{RESET}")
+
+
+def cmd_watchlist_remove(symbol):
+    from trader.research import load_watchlist, save_watchlist
+    wl = load_watchlist()
+    wl = [w for w in wl if w["symbol"] != symbol.upper()]
+    save_watchlist(wl)
+    print(f"{DIM}Removed {symbol.upper()}{RESET}")
+
+
 def cmd_cancel_strategy(strategy_id):
     from trader.strategies import cancel_strategy
     result = cancel_strategy(strategy_id)
@@ -439,6 +494,12 @@ def repl():
   run [INTERVAL_SEC]          run engine loop (default 300s)
   pnl                         P&L summary
 
+  {BOLD}Research:{RESET}
+  research [pre_market|midday|after_hours] [qwen|opus]
+  watchlist                   show watchlist with live quotes
+  wl add <SYM> [reason]       add to watchlist
+  wl rm <SYM>                 remove from watchlist
+
   {BOLD}Data:{RESET}
   politicians                 top trading politicians
   trades                      recent politician trades
@@ -507,6 +568,18 @@ def repl():
                 cmd_pnl()
             elif cmd == "stop" and len(parts) >= 2:
                 cmd_cancel_strategy(parts[1])
+            elif cmd == "research":
+                session = parts[1] if len(parts) > 1 else "midday"
+                brain = parts[2] if len(parts) > 2 else "qwen"
+                cmd_research(session, brain)
+            elif cmd == "watchlist" or cmd == "wl":
+                if len(parts) >= 3 and parts[1] == "add":
+                    reason = " ".join(parts[3:]) if len(parts) > 3 else ""
+                    cmd_watchlist_add(parts[2], reason)
+                elif len(parts) >= 3 and parts[1] in ("rm", "remove"):
+                    cmd_watchlist_remove(parts[2])
+                else:
+                    cmd_watchlist_show()
             elif cmd == "politicians":
                 cmd_politicians()
             elif cmd == "trades":
