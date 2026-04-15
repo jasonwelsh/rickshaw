@@ -79,6 +79,20 @@ class TraderApp(tk.Tk):
         # All widgets go into self.scroll_frame instead of self
         sf = self.scroll_frame
 
+        # ── Market Countdown ──────────────────────────────────────
+        countdown_frame = tk.Frame(sf, pady=3, padx=10, bg="#1a1a2e")
+        countdown_frame.pack(fill="x")
+
+        self.market_status_lbl = tk.Label(countdown_frame, text="", font=("Consolas", 12, "bold"),
+                                           bg="#1a1a2e", fg="#00ff88")
+        self.market_status_lbl.pack(side="left")
+
+        self.countdown_lbl = tk.Label(countdown_frame, text="", font=("Consolas", 12),
+                                       bg="#1a1a2e", fg="#ffffff")
+        self.countdown_lbl.pack(side="right")
+
+        self._update_countdown()
+
         # ── Account Bar ──────────────────────────────────────────
         acct_frame = tk.Frame(sf, pady=5, padx=10)
         acct_frame.pack(fill="x")
@@ -292,6 +306,59 @@ class TraderApp(tk.Tk):
         # Load last research if pane is visible
         if self.research_visible.get():
             self._load_last_research()
+
+    def _update_countdown(self):
+        from datetime import datetime, timedelta
+        now = datetime.now()
+        weekday = now.weekday()  # 0=Mon, 6=Sun
+
+        # Market hours: 9:30 AM - 4:00 PM ET (assuming local time is ET)
+        market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
+        market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
+
+        if weekday >= 5:
+            # Weekend — count to Monday open
+            days_until_monday = 7 - weekday
+            next_open = (now + timedelta(days=days_until_monday)).replace(
+                hour=9, minute=30, second=0, microsecond=0)
+            diff = next_open - now
+            h, remainder = divmod(int(diff.total_seconds()), 3600)
+            m, s = divmod(remainder, 60)
+            self.market_status_lbl.config(text="MARKET CLOSED", fg="#ff4444")
+            self.countdown_lbl.config(text=f"Opens Mon in {h}h {m}m {s}s")
+
+        elif now < market_open:
+            # Before open
+            diff = market_open - now
+            h, remainder = divmod(int(diff.total_seconds()), 3600)
+            m, s = divmod(remainder, 60)
+            self.market_status_lbl.config(text="PRE-MARKET", fg="#ffaa00")
+            self.countdown_lbl.config(text=f"Opens in {h}h {m}m {s}s")
+
+        elif now < market_close:
+            # Market open
+            diff = market_close - now
+            h, remainder = divmod(int(diff.total_seconds()), 3600)
+            m, s = divmod(remainder, 60)
+            self.market_status_lbl.config(text="MARKET OPEN", fg="#00ff88")
+            self.countdown_lbl.config(text=f"Closes in {h}h {m}m {s}s")
+
+        else:
+            # After close
+            tomorrow = now + timedelta(days=1)
+            if tomorrow.weekday() >= 5:
+                days_until_monday = 7 - now.weekday()
+                next_open = (now + timedelta(days=days_until_monday)).replace(
+                    hour=9, minute=30, second=0, microsecond=0)
+            else:
+                next_open = tomorrow.replace(hour=9, minute=30, second=0, microsecond=0)
+            diff = next_open - now
+            h, remainder = divmod(int(diff.total_seconds()), 3600)
+            m, s = divmod(remainder, 60)
+            self.market_status_lbl.config(text="MARKET CLOSED", fg="#ff4444")
+            self.countdown_lbl.config(text=f"Opens in {h}h {m}m {s}s")
+
+        self.after(1000, self._update_countdown)
 
     def auto_refresh(self):
         self.refresh()

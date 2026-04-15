@@ -1,0 +1,417 @@
+[
+  {
+    "id": "fx-EUR_USD-7056",
+    "type": "forex_trailing_stop",
+    "instrument": "EUR_USD",
+    "status": "cancelled",
+    "created": "2026-04-14T20:04:16.018452+00:00",
+    "config": {
+      "initial_units": 1000,
+      "stop_pips": 30,
+      "trail_pips": 20,
+      "take_profit_pips": 50,
+      "max_spread": 5.0,
+      "ladder_drops": []
+    },
+    "state": {
+      "entry_price": 1.17937,
+      "highest_price": 1.17937,
+      "current_floor": 1.1763700000000001,
+      "take_profit_price": 1.18437,
+      "total_units": 1000,
+      "total_cost": 1179.3700000000001,
+      "ladders_triggered": [],
+      "profit_taken": false
+    },
+    "log": [
+      {
+        "time": "2026-04-14T20:04:16.018452+00:00",
+        "action": "filled",
+        "msg": "Bought 1000 EUR_USD @ 1.17937. Floor: 1.17637 (30p). TP: 1.18437 (50p)"
+      },
+      {
+        "time": "2026-04-14T20:04:25.413101+00:00",
+        "action": "cancel",
+        "msg": "Cancelled by user"
+      }
+    ]
+  },
+  {
+    "id": "fx-EUR_USD-5111",
+    "type": "forex_trailing_stop",
+    "instrument": "EUR_USD",
+    "status": "closed",
+    "created": "2026-04-14T22:18:31.239087+00:00",
+    "config": {
+      "initial_units": 5000,
+      "stop_pips": 40,
+      "trail_pips": 25,
+      "take_profit_pips": 80,
+      "max_spread": 3.0,
+      "ladder_drops": [
+        [
+          60,
+          3000
+        ],
+        [
+          100,
+          5000
+        ]
+      ]
+    },
+    "state": {
+      "entry_price": 1.17983,
+      "highest_price": 1.1801,
+      "current_floor": 1.1776,
+      "take_profit_price": 1.18783,
+      "total_units": 5000,
+      "total_cost": 5899.15,
+      "ladders_triggered": [],
+      "profit_taken": false
+    },
+    "log": [
+      {
+        "time": "2026-04-14T22:18:31.239087+00:00",
+        "action": "filled",
+        "msg": "Bought 5000 EUR_USD @ 1.17983. Floor: 1.17583 (40p). TP: 1.18783 (80p)"
+      },
+      {
+        "time": "2026-04-14T23:34:09.804796+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.17985 new high. Floor: 1.17583 -> 1.17735 (25p)"
+      },
+      {
+        "time": "2026-04-14T23:35:11.332153+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.18004 new high. Floor: 1.17735 -> 1.17754 (25p)"
+      },
+      {
+        "time": "2026-04-14T23:45:33.687360+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.18010 new high. Floor: 1.17754 -> 1.17760 (25p)"
+      },
+      {
+        "time": "2026-04-15T10:28:52.545688+00:00",
+        "action": "stop_close",
+        "msg": "STOP HIT: Closed EUR_USD @ 1.17734. P&L: -24.9 pips (~$-12.45)"
+      }
+    ]
+  },
+  {
+    "id": "fx-GBP_USD-5111",
+    "type": "forex_trailing_stop",
+    "instrument": "GBP_USD",
+    "status": "closed",
+    "created": "2026-04-14T22:18:31.446248+00:00",
+    "config": {
+      "initial_units": 3000,
+      "stop_pips": 50,
+      "trail_pips": 30,
+      "take_profit_pips": 100,
+      "max_spread": 4.0,
+      "ladder_drops": [
+        [
+          80,
+          2000
+        ],
+        [
+          120,
+          3000
+        ]
+      ]
+    },
+    "state": {
+      "entry_price": 1.35716,
+      "highest_price": 1.35784,
+      "current_floor": 1.35484,
+      "take_profit_price": 1.36716,
+      "total_units": 3000,
+      "total_cost": 4071.4799999999996,
+      "ladders_triggered": [],
+      "profit_taken": false
+    },
+    "log": [
+      {
+        "time": "2026-04-14T22:18:31.446248+00:00",
+        "action": "filled",
+        "msg": "Bought 3000 GBP_USD @ 1.35716. Floor: 1.35216 (50p). TP: 1.36716 (100p)"
+      },
+      {
+        "time": "2026-04-14T23:27:57.169830+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35718 new high. Floor: 1.35216 -> 1.35418 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:28:58.557535+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35718 new high. Floor: 1.35418 -> 1.35418 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:29:59.984524+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35728 new high. Floor: 1.35418 -> 1.35428 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:34:09.915593+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35739 new high. Floor: 1.35428 -> 1.35439 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:35:11.423820+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35766 new high. Floor: 1.35439 -> 1.35467 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:44:32.358720+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35770 new high. Floor: 1.35467 -> 1.35470 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:45:33.777937+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35781 new high. Floor: 1.35470 -> 1.35482 (30p)"
+      },
+      {
+        "time": "2026-04-14T23:46:35.306202+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 1.35784 new high. Floor: 1.35482 -> 1.35484 (30p)"
+      },
+      {
+        "time": "2026-04-15T10:27:51.044346+00:00",
+        "action": "stop_close",
+        "msg": "STOP HIT: Closed GBP_USD @ 1.35476. P&L: -24.0 pips (~$-7.20)"
+      }
+    ]
+  },
+  {
+    "id": "fx-AUD_USD-5125",
+    "type": "forex_trailing_stop",
+    "instrument": "AUD_USD",
+    "status": "active",
+    "created": "2026-04-14T22:18:45.898936+00:00",
+    "config": {
+      "initial_units": 5000,
+      "stop_pips": 35,
+      "trail_pips": 20,
+      "take_profit_pips": 60,
+      "max_spread": 3.0,
+      "ladder_drops": []
+    },
+    "state": {
+      "entry_price": 0.71285,
+      "highest_price": 0.7148000000000001,
+      "current_floor": 0.7128000000000001,
+      "take_profit_price": 0.71885,
+      "total_units": 5000,
+      "total_cost": 3564.25,
+      "ladders_triggered": [],
+      "profit_taken": false
+    },
+    "log": [
+      {
+        "time": "2026-04-14T22:18:45.898936+00:00",
+        "action": "filled",
+        "msg": "Bought 5000 AUD_USD @ 0.71285. Floor: 0.70935 (35p). TP: 0.71885 (60p)"
+      },
+      {
+        "time": "2026-04-14T22:58:44.042294+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71287 new high. Floor: 0.70935 -> 0.71087 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:04:53.390531+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71290 new high. Floor: 0.71087 -> 0.71090 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:05:55.532935+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71292 new high. Floor: 0.71090 -> 0.71092 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:06:57.562336+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71294 new high. Floor: 0.71092 -> 0.71094 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:15:09.977250+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71297 new high. Floor: 0.71094 -> 0.71097 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:16:34.853895+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71298 new high. Floor: 0.71097 -> 0.71098 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:17:36.413329+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71304 new high. Floor: 0.71098 -> 0.71104 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:34:10.028186+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71310 new high. Floor: 0.71104 -> 0.71110 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:35:11.508927+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71320 new high. Floor: 0.71110 -> 0.71120 (20p)"
+      },
+      {
+        "time": "2026-04-14T23:45:33.890641+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71326 new high. Floor: 0.71120 -> 0.71126 (20p)"
+      },
+      {
+        "time": "2026-04-15T04:10:47.359356+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71327 new high. Floor: 0.71126 -> 0.71127 (20p)"
+      },
+      {
+        "time": "2026-04-15T04:11:48.813618+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71335 new high. Floor: 0.71127 -> 0.71135 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:00:13.023922+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71358 new high. Floor: 0.71135 -> 0.71158 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:04:22.768292+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71359 new high. Floor: 0.71158 -> 0.71159 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:07:31.866116+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71364 new high. Floor: 0.71159 -> 0.71164 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:08:33.354207+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71376 new high. Floor: 0.71164 -> 0.71176 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:11:35.808702+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71392 new high. Floor: 0.71176 -> 0.71192 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:13:44.616947+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71401 new high. Floor: 0.71192 -> 0.71201 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:17:54.622416+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71414 new high. Floor: 0.71201 -> 0.71214 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:18:56.233932+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71422 new high. Floor: 0.71214 -> 0.71222 (20p)"
+      },
+      {
+        "time": "2026-04-15T05:19:57.794421+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71437 new high. Floor: 0.71222 -> 0.71237 (20p)"
+      },
+      {
+        "time": "2026-04-15T07:05:04.873599+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71439 new high. Floor: 0.71237 -> 0.71239 (20p)"
+      },
+      {
+        "time": "2026-04-15T07:33:04.594937+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71444 new high. Floor: 0.71239 -> 0.71244 (20p)"
+      },
+      {
+        "time": "2026-04-15T07:34:06.046414+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71455 new high. Floor: 0.71244 -> 0.71255 (20p)"
+      },
+      {
+        "time": "2026-04-15T07:35:07.515047+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71471 new high. Floor: 0.71255 -> 0.71271 (20p)"
+      },
+      {
+        "time": "2026-04-15T07:39:17.050541+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71480 new high. Floor: 0.71271 -> 0.71280 (20p)"
+      }
+    ]
+  },
+  {
+    "id": "fx-short-USD_JPY-5137",
+    "type": "forex_short",
+    "instrument": "USD_JPY",
+    "status": "closed",
+    "created": "2026-04-14T22:18:57.233939+00:00",
+    "config": {
+      "initial_units": 3000,
+      "stop_pips": 50,
+      "trail_pips": 30,
+      "take_profit_pips": 100,
+      "max_spread": 5.0
+    },
+    "state": {
+      "entry_price": 158.777,
+      "lowest_price": 158.658,
+      "current_ceiling": 158.958,
+      "take_profit_price": 157.777,
+      "total_units": 3000,
+      "profit_taken": false
+    },
+    "log": [
+      {
+        "time": "2026-04-14T22:18:57.233939+00:00",
+        "action": "filled",
+        "msg": "Sold 3000 USD_JPY @ 158.77700. Ceiling: 159.27700 (50p). TP: 157.77700 (100p)"
+      },
+      {
+        "time": "2026-04-15T00:01:06.135398+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.76550 new low. Ceiling: 159.27700 -> 159.06550 (30p)"
+      },
+      {
+        "time": "2026-04-15T08:15:29.534992+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.74650 new low. Ceiling: 159.06550 -> 159.04650 (30p)"
+      },
+      {
+        "time": "2026-04-15T08:16:31.010280+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.71650 new low. Ceiling: 159.04650 -> 159.01650 (30p)"
+      },
+      {
+        "time": "2026-04-15T08:19:43.360260+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.69200 new low. Ceiling: 159.01650 -> 158.99200 (30p)"
+      },
+      {
+        "time": "2026-04-15T08:20:44.850330+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.66800 new low. Ceiling: 158.99200 -> 158.96800 (30p)"
+      },
+      {
+        "time": "2026-04-15T08:21:46.370616+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.66750 new low. Ceiling: 158.96800 -> 158.96750 (30p)"
+      },
+      {
+        "time": "2026-04-15T08:23:55.081176+00:00",
+        "action": "trail_down",
+        "msg": "TRAIL DOWN: 158.65800 new low. Ceiling: 158.96750 -> 158.95800 (30p)"
+      },
+      {
+        "time": "2026-04-15T10:18:31.433341+00:00",
+        "action": "stop_close",
+        "msg": "STOP HIT: Closed short USD_JPY @ 158.95850. P&L: -18.2p"
+      }
+    ]
+  }
+]

@@ -1,0 +1,392 @@
+This 3D model right here was generated
+completely locally, completely for free
+on just 6 GB of VRAM. That's it. That's
+basically all it took. And here's the
+crazy part. It was actually faster than
+running the full model, not slower,
+faster. And I will show you exactly how
+to set it up, how to find the best
+settings for your GPU, and much more.
+Having said that, let's get into it.
+So, if you have been following this
+channel, you already know that Trellis 2
+is currently the best open-source
+image-to-3D generator out there. You
+give it a single image and it gives you
+back a full 3D model with textures. But
+the problem has always been the
+hardware. Trellis 2 is a 4 billion
+parameter model. That's massive. And to
+run it, you have needed around at least
+10 to 12 GB of VRAM most of the time.
+And I see these comments on literally
+every single video I post. Like, can I
+run this on my own GPU? What about 8 GB
+of VRAM? What about 6 GB? And so on.
+Well, now there's finally a proper
+answer thanks to GG UF. GG UF is a
+compressed model format. And you can
+think of it like this. So, you take a
+huge 4K video file and then compress it
+to 1080p. The file gets way smaller. It
+uses way less memory to play. And
+honestly, for most purposes, you can
+barely tell the difference. Arrow X, you
+shoutout to him, by the way, has created
+a ComfyUI fork that loads Trellis 2 in
+this GG UF format. It's based on the
+Trellis 2 repository by Visual Bruno.
+And the results are kind of insane. Not
+only does it use half the VRAM, it
+actually runs faster than the full
+model. And I will show you all the data
+now. And by the end of this video, you
+will have Trellis 2 GG UF installed and
+running. You will know exactly which
+settings to use for your GPU, and you
+will see with your own eyes that the
+quality difference is basically
+invisible. So, let's set it up. Just a
+quick checklist before we start. So, you
+will need an Nvidia GPU with at least 6
+GB of VRAM. So, these are cards like,
+for example, the RTX 3050, RTX 4060, or
+the RTX 3050. So, basically most modern
+gaming GPUs that we that we have. You
+will also need to have Windows 10 or 11
+installed. And of course, as always, my
+the easy install script by I will and
+you will find a link down below in the
+video description. You will also find a
+detailed Trellis 2 installation guide
+that I will post you down below, which
+will explain in detail how you can
+install ComfyUI easy install and the
+default Trellis 2 installation that you
+will need also for the GG UF version.
+You don't need to download any models
+manually. The script can handle that
+automatically for you on the first run.
+Everything you need is basically linked
+in below. So, let's install it step by
+step.
+All right. So, for the installation,
+first, make sure to grab the
+installation script from
+pixel-minus-artistry.com/trellis-2-gguf.
+Link will be also down below in the
+video description. You will then get a
+dot bat file. Make sure to put it then
+into the add-ons folder and double-click
+it once you have installed Trellis 2 and
+ComfyUI easy install. And now, as you
+can see, it's doing its thing.
+Basically, it's pulling in the Arrow X
+GG UF fork, installing all the
+dependencies we need, the wheels, the
+custom nodes. So, basically everything
+we need for this installation. You
+basically don't need to touch anything,
+just let it run. Just to mention this,
+this might take a few minutes depending
+on your internet speed. So, now the GG
+UF fork has a bit and model manager. But
+on some systems, the auto download can
+fail because of a version mismatch in
+the Hugging Face library. So, I have
+made a separate model downloader script
+that bypasses that entirely. Just make
+sure to go back to the drive folder and
+grab the second dot bat file from the
+same link that you will find at
+pixel-minus-artistry.com/trellis-2-gguf.
+It's
+called download_trellis-2-gguf.bat.
+Drop it then into the same add-ons
+folder and double-click it. It will then
+automatically download all the GG UF
+models modified for you, the configs,
+the encoders and decoders, and so on.
+So, basically everything you need. Make
+sure then to let it run through and grab
+a cup of coffee because it might take a
+few minutes. So, once that is done, we
+can then start and launch ComfyUI to
+load the workflow. Once we then have
+ComfyUI open, you might see some alerts
+and in the latest ComfyUI version, even
+some red error messages. Just make sure
+don't worry about them. Those are mainly
+complaints by ComfyUI not instantly
+finding the models. Now, one more
+important thing. If you have been using
+my previous Trellis 2 workflows, those
+won't won't work directly with the GG UF
+nodes. There are a couple of different
+parameters. So, make sure to use the
+workflows that I have prepared for you.
+You will find them again in the video
+description. So, these are made for the
+GG UF because those are specifically
+made for the GG UF nodes and they will
+work basically out of the box. Once we
+have then the ComfyUI workflow open, you
+will see that here's the key difference
+because instead of the standard Trellis
+2 model loader, we are using here the GG
+UF load model node. And just take a
+quick look at this drop-down where you
+can see that we can choose here
+different quantization levels. So, we
+have got Q4, Q5, Q6, and Q8 plus the
+full safe tensor option. So, here's what
+I can recommend you based on your GPU
+and what came out of my tests. So, if
+you have got 6 GB of VRAM, go with the
+Q4 model because that's basically the
+sweet spot. It was peaking around 6.1 GB
+of VRAM in my testings. If you have got
+8 to 12 GB, you can easily go with the
+Q4 to Q8 model. Both are actually faster
+than the full model anyway. And in case
+you got 16 gigs or more, honestly, you
+can use Q8, which would be my
+recommendation because in most cases in
+my test, it was faster than the full
+default model that we usually get from
+Trellis 2 and the quality is in most
+cases still identical. As a quick check,
+make sure that at this point, you should
+see the workflow loaded with the GG UF
+load model node at the top.
+And now we can finally generate because
+I'm going to use this character that you
+might recognize from my earlier videos
+so we can directly compare. To get
+started, I will select here the Q4 KM
+model, the lowest most compressed option
+because I want to show you the
+worst-case scenario first. Now, before I
+hit generate, let me pull up the task
+manager so you can see exactly what's
+happening with the VRAM. And watch the
+VRAM usage here. So, it's climbing and
+it's peaking around 6 to 6.5 GB of VRAM.
+That's it. On a 6 gig card, that would
+just barely fit, but in the end, it fits
+and you can then run it. So, now this is
+your first time running a particular
+quant level, it might take longer the
+first time generating and loading in all
+models. On my test, the total time for
+the full pipeline using here the high
+quality workflow with mesh generation,
+refinement, the texturing, and UV
+unwrapping, it took about 8 minutes on
+my 5080. And here you can also see the
+result. So, when we look at it, this is
+the version where we had the 6 GB of
+VRAM. The geometry is clean, textures
+are kind of sharp, and the proportions
+are also working. And I mean, this is
+the Q4 quantized model. So, with the
+lowest compression model, and I think it
+looks really great for that.
+But you don't have to take my word for
+it. Let me show you also something else
+because here's where it gets really
+interesting. I ran this exact same input
+image with the exact same seed and
+settings through all four GG UF
+quantization levels. So, through Q4, Q5,
+Q6, and Q8. And here we have the four
+models. Same input, same seed, and one
+of these is Q4, the most compressed one
+that fits in 6 GB of VRAM. Can you tell
+actually which one it is?
+Yeah, as you can see, you can't really
+tell, can you? Because the difference is
+basically invisible. I have been staring
+at this side by side for a while and I'm
+still struggling to find meaningful
+differences. Same story here with the
+fine geometry, like the claws, spikes,
+and surface details all holding up
+across every quant level, basically. Of
+course, it's not only just organic
+models. I also tested a hard surface
+asset as well. So, this search robot.
+And this is the kind of thing that will
+usually expose a geometry issues first.
+In addition to that, I also generated a
+building because some of you asked for
+that as ready. So, here you can see also
+the windows, balconies, and so on. And
+the architectural geometry is
+notoriously tricky for 3D generators.
+And I think here it did a good job
+overall. Just to show you really quick,
+in my test for the monster, so the Q4
+took 6.1 GB of VRAM. It took 8 minutes
+and 6 seconds to run the model. For the
+Q8, it was on the other hand like 8.9 GB
+of VRAM with 7 minutes and 9 seconds of
+generation time. And here's also a
+special thing, the full uncompressed
+standard model. The full uncompressed
+standard model took around 10 to 11 gigs
+of VRAM and 10 minutes and 8 seconds in
+total. The GG UF versions are actually
+faster overall. So, Q4 will save you
+around two full minutes compared to the
+full model and uses half of the VRAM,
+which is of course a big game-changer.
+So, definitely keep that in mind and I'm
+curious to know how it works out for
+you. So, let me know down below in the
+comments. For maximum quality, of
+course, the standard model is still the
+best option, but just keep that in mind
+that you can use the other models, you
+know, for faster generation of all.
+So, now couple more things you should
+know. For example, that multi-view
+works, too. So, if you're wondering
+where the multi-view generation works
+with the GG F version, yes, it does.
+Same GG F loader, just make sure to feed
+it multiple reference images. I have, by
+the way, also included the multi-view
+workflow as well on
+pixelminusartistry.com/trellis2gguf.
+You can, by the way, of course, also
+always uh yourself exchange the Trellis
+to model loader with the GG F one and
+then reconnect the nodes to the existing
+workflows that we tested out in the
+previous workflows in my videos. But,
+question is, of course, is where does it
+actually break? Because on my 5080 with
+16 GB of VRAM, I could push it all the
+way to the highest resolution with 50
+samples and increased mesh refiner
+samples before hitting the limit. But,
+this, of course, always depends on the
+complexity of input image as well. So, a
+simple prop will use less VRAM than a
+detailed character with lots of fine
+geometry. On 6 gigs, definitely make
+sure to stick with the default settings
+in the workflow because they are already
+optimized for low VRAM. Don't try to
+crank up the resolution or sample count
+to something the max settings or you
+will get most likely still out of memory
+errors. Now, on my card, the full
+pipeline, like the mesh generation,
+refinement, texturing, UV unwrapping,
+and so on, all of it ran within a like
+6.1 GB on Q4. No out of memory errors or
+no crashes. But, if you are on a card
+with exactly 6 GB and you do run into
+out of memory errors during generation
+of or post-processing, here actually
+three things you can do. First, make
+sure to lower the resolution in the
+generation nodes from 1024 to 512. It
+will cut your VRAM usage significantly.
+Second, you can also decrease the token
+number in the nodes themselves. So,
+fewer tokens means less memory needed
+during inference. And third, make sure
+to lower the texture resolution in the
+texturing node. So, you will get
+slightly less detailed textures, but the
+mesh itself stays the same. Anyone of
+these will free up enough VRAM to get
+you through, and you can combine them
+basically in case you need to.
+Three additional quick tips before we
+wrap up. Number one, make sure to close
+everything else before you generate. On
+6 gigs of VRAM, every megabyte counts.
+So, make sure to close Chrome, close
+Discord, or end close your game, and
+give ComfyUI then the full GPU usage.
+Number two, and this is also a big one,
+make sure that you add the minus minus
+disable pinned memory tag to your
+ComfyUI startup file. This will release
+any memory that your GPU is holding off
+and will also allocating it to ComfyUI.
+And number three is basically to don't
+try to load in your old Trellis to
+workflow and expecting it to work out of
+the box because you will need then to
+exchange the Trellis to model loader
+with the GG F one. Also, make sure that
+you're not using any other Trellis to GG
+F nodes that you will find in the
+package itself because it's really uh
+just focused on exchanging the Trellis
+to model loader.
+And then, as a final comparison here,
+they I just wanted to quickly show you
+them also in Blender. So, this is the
+actual mesh coming out of the pipeline.
+So, let me switch also to the wireframe
+you so you can look at the topology.
+Obviously, you can see uh this would
+need to be retopologized now. For those
+ones, I always I recommend to take them,
+for example, into a new one 3D Studio to
+then retopologize them or take them, for
+example, into ZBrush or in Blender for
+further remeshing. Same thing you can
+see, by the way, also for the hard
+surface robots. So, uh here you will
+also see that the topology is quite
+dense and needs, of course, further
+work. I think the texturing overall
+works really good here, by the way. And
+for the building, you can see that the
+shape is holding up really nicely in the
+mesh. And yeah, I think this is
+definitely working great. So, basically,
+what you're getting out of this pipeline
+is generally ready for the next step.
+So, whether that's like retopologizing,
+of course, rigging, and or dropping it
+like as background assets, for example,
+in your game engine. Every single one of
+the those models was, by the way,
+generated locally for free on 6 GB of
+VRAM, faster than the full model, and
+with quality you honestly can't tell
+apart. And this is, of course, great
+because in case you have a less strong
+GPU, you can still run Trellis to and
+test it out yourself. So, make sure to
+grab the installer from
+pixelminusartistry.com/trellis2gguf.
+I actually had the idea to also create a
+compatibility list for our community.
+So, definitely make sure to drop your
+GPU model down below and which card
+level you use. So, that would then help
+hopefully everyone, and I would then
+exclusively share it in the newsletter
+and our Discord. So, now getting the
+mesh is really only half the story
+because what you do with it after is
+where it gets really exciting. So, in my
+next video, I'm going to show you a
+completely new local retexturing
+workflow using projection texturing in
+ComfyUI. So, you can take these meshes
+and give them proper high-quality
+textures, all local and free to use. So,
+make sure you are subscribed with the
+bell on so you don't uh miss that one.
+Thanks for watching, and I will see you
+on the next one.

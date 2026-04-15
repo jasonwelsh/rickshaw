@@ -1,0 +1,72 @@
+[
+  {
+    "time": "2026-04-14T20:04:16.021451+00:00",
+    "strategy": "fx-EUR_USD-7056",
+    "action": "filled",
+    "instrument": "EUR_USD",
+    "units": 1000,
+    "price": 1.17937,
+    "spread": 1.7
+  },
+  {
+    "time": "2026-04-14T22:18:31.239087+00:00",
+    "strategy": "fx-EUR_USD-5111",
+    "action": "filled",
+    "instrument": "EUR_USD",
+    "units": 5000,
+    "price": 1.17983,
+    "spread": 2.0
+  },
+  {
+    "time": "2026-04-14T22:18:31.451497+00:00",
+    "strategy": "fx-GBP_USD-5111",
+    "action": "filled",
+    "instrument": "GBP_USD",
+    "units": 3000,
+    "price": 1.35716,
+    "spread": 2.4
+  },
+  {
+    "time": "2026-04-14T22:18:45.904441+00:00",
+    "strategy": "fx-AUD_USD-5125",
+    "action": "filled",
+    "instrument": "AUD_USD",
+    "units": 5000,
+    "price": 0.71285,
+    "spread": 1.9
+  },
+  {
+    "time": "2026-04-14T22:18:57.238939+00:00",
+    "strategy": "fx-short-USD_JPY-5137",
+    "action": "short_filled",
+    "instrument": "USD_JPY",
+    "units": 3000,
+    "price": 158.777
+  },
+  {
+    "time": "2026-04-15T10:18:31.433341+00:00",
+    "strategy": "fx-short-USD_JPY-5137",
+    "action": "stop_close",
+    "instrument": "USD_JPY",
+    "price": 158.95850000000002,
+    "pnl_pips": -18.2
+  },
+  {
+    "time": "2026-04-15T10:27:51.044346+00:00",
+    "strategy": "fx-GBP_USD-5111",
+    "action": "stop_close",
+    "instrument": "GBP_USD",
+    "price": 1.3547600000000002,
+    "pnl_pips": -24.0,
+    "pnl_usd": -7.2
+  },
+  {
+    "time": "2026-04-15T10:28:52.545688+00:00",
+    "strategy": "fx-EUR_USD-5111",
+    "action": "stop_close",
+    "instrument": "EUR_USD",
+    "price": 1.17734,
+    "pnl_pips": -24.9,
+    "pnl_usd": -12.45
+  }
+]
