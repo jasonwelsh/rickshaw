@@ -199,8 +199,8 @@
     },
     "state": {
       "entry_price": 0.71285,
-      "highest_price": 0.715085,
-      "current_floor": 0.713085,
+      "highest_price": 0.716225,
+      "current_floor": 0.714225,
       "take_profit_price": 0.71885,
       "total_units": 5000,
       "total_cost": 3564.25,
@@ -352,6 +352,66 @@
         "time": "2026-04-15T14:10:44.520292+00:00",
         "action": "trail_up",
         "msg": "TRAIL UP: 0.71508 new high. Floor: 0.71290 -> 0.71308 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:14:49.632205+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71515 new high. Floor: 0.71308 -> 0.71315 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:16:58.439026+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71527 new high. Floor: 0.71315 -> 0.71327 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:18:00.213010+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71538 new high. Floor: 0.71327 -> 0.71338 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:19:02.139318+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71542 new high. Floor: 0.71338 -> 0.71342 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:20:03.871629+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71551 new high. Floor: 0.71342 -> 0.71351 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:21:32.697805+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71555 new high. Floor: 0.71351 -> 0.71355 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:23:34.654683+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71559 new high. Floor: 0.71355 -> 0.71359 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:24:36.358981+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71566 new high. Floor: 0.71359 -> 0.71366 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:26:46.247126+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71576 new high. Floor: 0.71366 -> 0.71376 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:27:48.016839+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71593 new high. Floor: 0.71376 -> 0.71393 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:28:49.904723+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71605 new high. Floor: 0.71393 -> 0.71405 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:29:51.263073+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71623 new high. Floor: 0.71405 -> 0.71422 (20p)"
       }
     ]
   },

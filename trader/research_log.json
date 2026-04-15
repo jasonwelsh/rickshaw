@@ -74,5 +74,26 @@
       }
     ],
     "report": "AAPL|Tech|Strong ecosystem growth\nNVDA|Tech|AI demand surge\nJPM|Finance|Robust capital ratios\nBAC|Finance|High yield relative price\nXOM|Energy|Oil price stability\nCVX|Energy|Consistent dividend growth\nUNH|Healthcare|Managed care expansion\nJNJ|Healthcare|Consistent cash flow\nDE|Industrial|Infrastructure spending\nWMT|Consumer|E-commerce resilience"
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-15T10:13:08.759933",
+    "mode": "qwen",
+    "picks": [],
+    "report": ""
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-15T10:20:27.947475",
+    "mode": "qwen",
+    "picks": [],
+    "report": "Qwen error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-15T10:28:20.975737",
+    "mode": "qwen",
+    "picks": [],
+    "report": "Qwen error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
   }
 ]

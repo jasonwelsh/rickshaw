@@ -240,14 +240,17 @@ def main():
                         log.info(f"[Research] Qwen picked: {pick_names}")
                         if tg_token:
                             send_heartbeat(tg_token, tg_chat, f"[Research] Qwen picked: {pick_names}")
-                    else:
-                        log.info("[Research] No picks from Qwen, using static universe")
 
-                    # Step 2: Screener scores and deploys
-                    from trader.screener import auto_deploy
-                    log.info("Running screener...")
-                    result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
-                                         max_positions=8)
+                        # Step 2: Screener scores and deploys ONLY Qwen's picks
+                        from trader.screener import auto_deploy
+                        log.info("Running screener on Qwen's picks...")
+                        result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
+                                             max_positions=8)
+                    else:
+                        log.warning("[Research] Qwen returned no picks. Skipping screener. No trades today.")
+                        if tg_token:
+                            send_heartbeat(tg_token, tg_chat, "[Research] Qwen returned no picks. No trades today. Will retry tomorrow.")
+                        result = {"status": "skipped", "msg": "No research picks"}
                     if result["status"] == "deployed" and result.get("picks"):
                         picks_msg = ", ".join(f"{p['symbol']}(score={p['score']})" for p in result["picks"])
                         msg = f"[Screener] Auto-deployed: {picks_msg}"

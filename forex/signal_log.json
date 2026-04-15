@@ -3857,5 +3857,141 @@
       "neutral": 2
     },
     "signal_count": 10
+  },
+  {
+    "time": "2026-04-15T14:14:47.142461+00:00",
+    "instrument": "GBP_JPY",
+    "timeframe": "H1",
+    "price": 215.7265,
+    "composite": {
+      "direction": 1,
+      "confidence": 0.0,
+      "recommendation": "no_trade",
+      "agreement": 0.0,
+      "signal_count": 9,
+      "bullish": 4,
+      "bearish": 4,
+      "neutral": 1
+    },
+    "signal_count": 9
+  },
+  {
+    "time": "2026-04-15T14:14:47.843797+00:00",
+    "instrument": "GBP_USD",
+    "timeframe": "H1",
+    "price": 1.356655,
+    "composite": {
+      "direction": 1,
+      "confidence": 0.168,
+      "recommendation": "no_trade",
+      "agreement": 0.667,
+      "signal_count": 10,
+      "bullish": 5,
+      "bearish": 1,
+      "neutral": 4
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-15T14:14:48.261854+00:00",
+    "instrument": "USD_CHF",
+    "timeframe": "H1",
+    "price": 0.78115,
+    "composite": {
+      "direction": -1,
+      "confidence": 0.039,
+      "recommendation": "no_trade",
+      "agreement": 0.333,
+      "signal_count": 10,
+      "bullish": 2,
+      "bearish": 4,
+      "neutral": 4
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-15T14:14:48.537547+00:00",
+    "instrument": "EUR_USD",
+    "timeframe": "H1",
+    "price": 1.1792,
+    "composite": {
+      "direction": 1,
+      "confidence": 0.19,
+      "recommendation": "no_trade",
+      "agreement": 0.667,
+      "signal_count": 10,
+      "bullish": 5,
+      "bearish": 1,
+      "neutral": 4
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-15T14:14:48.774132+00:00",
+    "instrument": "EUR_GBP",
+    "timeframe": "H1",
+    "price": 0.8692200000000001,
+    "composite": {
+      "direction": -1,
+      "confidence": 0.104,
+      "recommendation": "no_trade",
+      "agreement": 0.6,
+      "signal_count": 10,
+      "bullish": 1,
+      "bearish": 4,
+      "neutral": 5
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-15T14:14:48.988243+00:00",
+    "instrument": "USD_JPY",
+    "timeframe": "H1",
+    "price": 159.014,
+    "composite": {
+      "direction": -1,
+      "confidence": 0.05,
+      "recommendation": "no_trade",
+      "agreement": 0.429,
+      "signal_count": 9,
+      "bullish": 2,
+      "bearish": 5,
+      "neutral": 2
+    },
+    "signal_count": 9
+  },
+  {
+    "time": "2026-04-15T14:14:49.197133+00:00",
+    "instrument": "USD_CAD",
+    "timeframe": "H1",
+    "price": 1.3751600000000002,
+    "composite": {
+      "direction": -1,
+      "confidence": 0.042,
+      "recommendation": "no_trade",
+      "agreement": 0.2,
+      "signal_count": 10,
+      "bullish": 4,
+      "bearish": 6,
+      "neutral": 0
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-15T14:14:49.413459+00:00",
+    "instrument": "EUR_CHF",
+    "timeframe": "H1",
+    "price": 0.921145,
+    "composite": {
+      "direction": -1,
+      "confidence": 0.048,
+      "recommendation": "no_trade",
+      "agreement": 0.429,
+      "signal_count": 10,
+      "bullish": 2,
+      "bearish": 5,
+      "neutral": 3
+    },
+    "signal_count": 10
   }
 ]

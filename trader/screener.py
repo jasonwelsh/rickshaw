@@ -187,17 +187,14 @@ def run_screen(trader, api_key, secret_key, top_n=5, exclude_held=True, max_budg
     held = get_current_holdings(trader)
     held_sectors = held
 
-    # Use Qwen's watchlist as primary universe if available, fall back to static
+    # Use Qwen's watchlist ONLY — no static fallback
     from trader.research import load_watchlist
     watchlist = load_watchlist()
     if watchlist:
         scan_symbols = [w["symbol"] for w in watchlist if w["symbol"] not in held]
-        # Also add the static universe as fallback candidates
-        for s in ALL_SYMBOLS:
-            if s not in scan_symbols and s not in held:
-                scan_symbols.append(s)
     else:
-        scan_symbols = [s for s in ALL_SYMBOLS if s not in held] if exclude_held else ALL_SYMBOLS
+        # No watchlist = no research was done = don't trade
+        return []
 
     # Get all quotes
     quotes = get_quotes_batch(trader, scan_symbols)
