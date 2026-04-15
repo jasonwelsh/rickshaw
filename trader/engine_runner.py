@@ -226,13 +226,26 @@ def main():
         try:
             market_open = is_market_open()
 
-            # ── Daily screener (runs once at market open) ─────
+            # ── Daily research + screener (runs once at market open) ──
             today = datetime.now().strftime("%Y-%m-%d")
             if market_open and last_screen_date != today:
                 last_screen_date = today
                 try:
+                    # Step 1: Qwen researches and builds watchlist
+                    from trader.research import pre_screen_research
+                    log.info("Running pre-screen research (Qwen)...")
+                    picks = pre_screen_research(trader)
+                    if picks:
+                        pick_names = ", ".join(p["symbol"] for p in picks)
+                        log.info(f"[Research] Qwen picked: {pick_names}")
+                        if tg_token:
+                            send_heartbeat(tg_token, tg_chat, f"[Research] Qwen picked: {pick_names}")
+                    else:
+                        log.info("[Research] No picks from Qwen, using static universe")
+
+                    # Step 2: Screener scores and deploys
                     from trader.screener import auto_deploy
-                    log.info("Running daily screener...")
+                    log.info("Running screener...")
                     result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
                                          max_positions=8)
                     if result["status"] == "deployed" and result.get("picks"):

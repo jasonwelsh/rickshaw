@@ -235,6 +235,95 @@ def _ask_qwen(prompt):
         return {"answer": f"Qwen error: {e}"}
 
 
+def pre_screen_research(trader):
+    """Qwen analyzes market data and outputs a curated ticker list for the screener.
+
+    This runs BEFORE the screener. Qwen thinks, screener filters.
+
+    Returns: list of symbols Qwen recommends screening, with reasons.
+    """
+    movers = get_market_movers(trader)
+    portfolio = get_portfolio_summary(trader)
+
+    # Build focused prompt for ticker selection
+    by_sector = {}
+    for m in movers:
+        by_sector.setdefault(m["sector"], []).append(m)
+
+    prompt = f"""You are a pre-market stock screener for a small account (${portfolio['cash']:,.0f} cash).
+
+CURRENT POSITIONS: {', '.join(p['symbol'] for p in portfolio['positions']) if portfolio['positions'] else 'none'}
+
+MARKET DATA:
+"""
+    for sector, stocks in by_sector.items():
+        syms = " | ".join(f"{s['symbol']}:${s['price']}" for s in stocks)
+        prompt += f"  {sector}: {syms}\n"
+
+    prompt += f"""
+TASK: Pick exactly 10 stock tickers to screen for buying today.
+
+RULES:
+- Must be affordable (price under ${portfolio['cash'] * 0.9:.0f})
+- Diversify across sectors (max 2 per sector)
+- Don't pick stocks we already hold
+- Prefer stocks showing momentum (price movement)
+- Include at least 1 from each sector if affordable
+
+OUTPUT FORMAT (exactly this, one per line):
+SYMBOL|SECTOR|REASON
+
+Example:
+BAC|Finance|Strong banking sector momentum
+PFE|Healthcare|Low price entry point at $27
+
+Output ONLY the 10 lines, nothing else."""
+
+    answer = _ask_qwen(prompt)
+    report = answer.get("answer", "")
+
+    # Parse the response into a ticker list
+    picks = []
+    for line in report.strip().split("\n"):
+        line = line.strip()
+        if "|" in line:
+            parts = line.split("|")
+            if len(parts) >= 2:
+                symbol = parts[0].strip().upper()
+                # Validate it's a real ticker (1-5 uppercase letters)
+                import re
+                if re.match(r'^[A-Z]{1,5}$', symbol):
+                    picks.append({
+                        "symbol": symbol,
+                        "sector": parts[1].strip() if len(parts) > 1 else "Unknown",
+                        "reason": parts[2].strip() if len(parts) > 2 else "",
+                    })
+
+    # Save to watchlist for the screener
+    if picks:
+        save_watchlist(picks)
+
+    # Log
+    result = {
+        "session": "pre_screen",
+        "time": datetime.now().isoformat(),
+        "mode": "qwen",
+        "picks": picks,
+        "report": report,
+    }
+    log = []
+    if os.path.exists(RESEARCH_LOG):
+        with open(RESEARCH_LOG) as f:
+            log = json.load(f)
+    log.append(result)
+    if len(log) > 50:
+        log = log[-50:]
+    with open(RESEARCH_LOG, "w") as f:
+        json.dump(log, f, indent=2)
+
+    return picks
+
+
 def get_research_schedule():
     """Return the standard research schedule."""
     return [

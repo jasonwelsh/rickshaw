@@ -139,16 +139,21 @@ def score_spread(spread_pct):
     return max(0, min(100, round(100 - spread_pct * 20)))
 
 
-def score_price_range(price):
-    """Score based on whether price is in tradeable range."""
-    if price < 20 or price > 1000:
+def score_price_range(price, max_budget=None):
+    """Score based on whether price is in tradeable range and affordable."""
+    if price < 5 or price > 1000:
         return 0
-    if 50 <= price <= 500:
-        return 100
-    if 20 <= price < 50:
+    # If we have a budget, penalize stocks we can't afford at least 1 share
+    if max_budget and price > max_budget * 0.9:
+        return 0  # Can't afford it
+    if 20 <= price <= 200:
+        return 100  # Sweet spot
+    if 5 <= price < 20:
         return 60
+    if 200 < price <= 500:
+        return 80
     if 500 < price <= 1000:
-        return 70
+        return 50
     return 50
 
 
@@ -174,7 +179,7 @@ def score_congress(symbol, congress_buys):
 
 # ── Main Screener ────────────────────────────────────────────────────
 
-def run_screen(trader, api_key, secret_key, top_n=5, exclude_held=True):
+def run_screen(trader, api_key, secret_key, top_n=5, exclude_held=True, max_budget=None):
     """Screen the universe and return top N picks with scores.
 
     Returns: [{"symbol", "sector", "score", "scores", "price"}, ...]
@@ -182,8 +187,20 @@ def run_screen(trader, api_key, secret_key, top_n=5, exclude_held=True):
     held = get_current_holdings(trader)
     held_sectors = held
 
+    # Use Qwen's watchlist as primary universe if available, fall back to static
+    from trader.research import load_watchlist
+    watchlist = load_watchlist()
+    if watchlist:
+        scan_symbols = [w["symbol"] for w in watchlist if w["symbol"] not in held]
+        # Also add the static universe as fallback candidates
+        for s in ALL_SYMBOLS:
+            if s not in scan_symbols and s not in held:
+                scan_symbols.append(s)
+    else:
+        scan_symbols = [s for s in ALL_SYMBOLS if s not in held] if exclude_held else ALL_SYMBOLS
+
     # Get all quotes
-    quotes = get_quotes_batch(trader, ALL_SYMBOLS)
+    quotes = get_quotes_batch(trader, scan_symbols)
 
     # Get congress signals (best effort)
     congress_buys = set()
@@ -197,10 +214,7 @@ def run_screen(trader, api_key, secret_key, top_n=5, exclude_held=True):
 
     results = []
 
-    for sym in ALL_SYMBOLS:
-        # Skip if already held
-        if exclude_held and sym in held:
-            continue
+    for sym in scan_symbols:
 
         q = quotes.get(sym)
         if not q:
@@ -215,7 +229,7 @@ def run_screen(trader, api_key, secret_key, top_n=5, exclude_held=True):
         # Score each dimension
         m5, m20 = score_momentum(closes, price)
         s_spread = score_spread(spread)
-        s_price = score_price_range(price)
+        s_price = score_price_range(price, max_budget=max_budget)
         s_sector = score_sector_balance(sym, held_sectors)
         s_congress = score_congress(sym, congress_buys)
 
@@ -281,34 +295,52 @@ def auto_deploy(trader, api_key, secret_key, max_positions=8, shares_per=5,
     if slots <= 0:
         return {"status": "full", "msg": f"Already at {len(current)}/{max_positions} positions"}
 
-    picks = run_screen(trader, api_key, secret_key, top_n=slots)
+    # Get available cash for budget-aware screening
+    try:
+        acct = trader.get_account()
+        total_cash = float(acct.get("cash", 500))
+    except Exception:
+        total_cash = 500
+
+    picks = run_screen(trader, api_key, secret_key, top_n=slots, max_budget=total_cash)
     deployed = []
 
     for pick in picks:
         sym = pick["symbol"]
         price = pick["price"]
 
+        # Skip if we can't afford even 1 share
+        if price > total_cash * 0.9:
+            continue
+
         # Adjust qty based on price to keep position sizes roughly equal
-        target_size = 1500  # ~$1500 per position
+        target_size = max(50, total_cash / max_positions)
         qty = max(1, int(target_size / price))
 
         # Ladder drops scale with score — higher score = more aggressive ladders
         ladders = [(20, max(1, qty // 2)), (30, qty)]
 
-        result = create_trailing_stop(
-            trader, sym, qty,
-            stop_pct=stop_pct, trail_pct=trail_pct,
-            ladder_drops=ladders,
-        )
+        try:
+            result = create_trailing_stop(
+                trader, sym, qty,
+                stop_pct=stop_pct, trail_pct=trail_pct,
+                ladder_drops=ladders,
+            )
 
-        if "error" not in result:
-            deployed.append({
-                "symbol": sym,
-                "qty": qty,
-                "score": pick["score"],
-                "sector": pick["sector"],
-                "strategy_id": result["id"],
-            })
+            if "error" not in result:
+                deployed.append({
+                    "symbol": sym,
+                    "qty": qty,
+                    "score": pick["score"],
+                    "sector": pick["sector"],
+                    "strategy_id": result["id"],
+                })
+                # Update remaining cash
+                total_cash -= price * qty
+                if total_cash < 50:
+                    break  # No more money
+        except Exception:
+            continue  # Skip this pick, try next
 
     return {
         "status": "deployed",

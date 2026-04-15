@@ -199,8 +199,8 @@
     },
     "state": {
       "entry_price": 0.71285,
-      "highest_price": 0.7148000000000001,
-      "current_floor": 0.7128000000000001,
+      "highest_price": 0.715085,
+      "current_floor": 0.713085,
       "take_profit_price": 0.71885,
       "total_units": 5000,
       "total_cost": 3564.25,
@@ -342,6 +342,16 @@
         "time": "2026-04-15T07:39:17.050541+00:00",
         "action": "trail_up",
         "msg": "TRAIL UP: 0.71480 new high. Floor: 0.71271 -> 0.71280 (20p)"
+      },
+      {
+        "time": "2026-04-15T13:30:03.019858+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71490 new high. Floor: 0.71280 -> 0.71290 (20p)"
+      },
+      {
+        "time": "2026-04-15T14:10:44.520292+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71508 new high. Floor: 0.71290 -> 0.71308 (20p)"
       }
     ]
   },
