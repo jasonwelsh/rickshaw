@@ -247,10 +247,11 @@ def main():
                         result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
                                              max_positions=8)
                     else:
-                        log.warning("[Research] Qwen returned no picks. Skipping screener. No trades today.")
+                        log.warning("[Research] Qwen returned no picks. Will retry next cycle.")
                         if tg_token:
-                            send_heartbeat(tg_token, tg_chat, "[Research] Qwen returned no picks. No trades today. Will retry tomorrow.")
-                        result = {"status": "skipped", "msg": "No research picks"}
+                            send_heartbeat(tg_token, tg_chat, "[Research] Qwen returned no picks. Retrying next cycle.")
+                        last_screen_date = None  # Reset so it retries next cycle
+                        result = {"status": "retry", "msg": "No research picks, will retry"}
                     if result["status"] == "deployed" and result.get("picks"):
                         picks_msg = ", ".join(f"{p['symbol']}(score={p['score']})" for p in result["picks"])
                         msg = f"[Screener] Auto-deployed: {picks_msg}"

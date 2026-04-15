@@ -2724,3 +2724,143 @@ Spreads: EUR_USD:1.6p GBP_USD:2.0p USD_JPY:1.4p
 Strategies: 1 active
 Actions:
   [fx-AUD_USD-5125] TRAIL UP: 0.71508 new high. Floor: 0.71290 -> 0.71308 (20p)
+2026-04-15 10:14:49,634 [fx-AUD_USD-5125] TRAIL UP: 0.71515 new high. Floor: 0.71308 -> 0.71315 (20p)
+2026-04-15 10:14:50,119 [Forex 10:14:50] cycle #870
+NAV: $99,985.79 | Balance: $99,979.37
+Margin: $257.27 | UPL: $+6.42
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.73
+  AUD_USD: LONG 5000u $+11.15
+Spreads: EUR_USD:1.6p GBP_USD:1.8p USD_JPY:1.7p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71515 new high. Floor: 0.71308 -> 0.71315 (20p)
+2026-04-15 10:16:58,441 [fx-AUD_USD-5125] TRAIL UP: 0.71527 new high. Floor: 0.71315 -> 0.71327 (20p)
+2026-04-15 10:16:59,399 [Forex 10:16:59] cycle #872
+NAV: $99,986.88 | Balance: $99,979.37
+Margin: $257.29 | UPL: $+7.51
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.29
+  AUD_USD: LONG 5000u $+11.80
+Spreads: EUR_USD:1.6p GBP_USD:2.0p USD_JPY:1.6p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71527 new high. Floor: 0.71315 -> 0.71327 (20p)
+2026-04-15 10:18:00,214 [fx-AUD_USD-5125] TRAIL UP: 0.71538 new high. Floor: 0.71327 -> 0.71338 (20p)
+2026-04-15 10:18:01,278 [Forex 10:18:01] cycle #873
+NAV: $99,987.17 | Balance: $99,979.37
+Margin: $257.31 | UPL: $+7.80
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.52
+  AUD_USD: LONG 5000u $+12.30
+Spreads: EUR_USD:1.6p GBP_USD:1.8p USD_JPY:1.7p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71538 new high. Floor: 0.71327 -> 0.71338 (20p)
+2026-04-15 10:19:02,141 [fx-AUD_USD-5125] TRAIL UP: 0.71542 new high. Floor: 0.71338 -> 0.71342 (20p)
+2026-04-15 10:19:03,054 [Forex 10:19:03] cycle #874
+NAV: $99,987.64 | Balance: $99,979.37
+Margin: $257.31 | UPL: $+8.27
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.25
+  AUD_USD: LONG 5000u $+12.65
+Spreads: EUR_USD:1.7p GBP_USD:1.8p USD_JPY:1.7p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71542 new high. Floor: 0.71338 -> 0.71342 (20p)
+2026-04-15 10:20:03,874 [fx-AUD_USD-5125] TRAIL UP: 0.71551 new high. Floor: 0.71342 -> 0.71351 (20p)
+2026-04-15 10:20:05,288 [Forex 10:20:05] cycle #875
+NAV: $99,988.33 | Balance: $99,979.37
+Margin: $257.33 | UPL: $+8.96
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.04
+  AUD_USD: LONG 5000u $+13.00
+Spreads: EUR_USD:1.7p GBP_USD:1.9p USD_JPY:1.5p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71551 new high. Floor: 0.71342 -> 0.71351 (20p)
+2026-04-15 10:21:32,699 [fx-AUD_USD-5125] TRAIL UP: 0.71555 new high. Floor: 0.71351 -> 0.71355 (20p)
+2026-04-15 10:21:33,634 [Forex 10:21:33] cycle #876
+NAV: $99,988.23 | Balance: $99,979.37
+Margin: $257.33 | UPL: $+8.86
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.29
+  AUD_USD: LONG 5000u $+13.15
+Spreads: EUR_USD:1.8p GBP_USD:1.9p USD_JPY:1.8p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71555 new high. Floor: 0.71351 -> 0.71355 (20p)
+2026-04-15 10:23:34,655 [fx-AUD_USD-5125] TRAIL UP: 0.71559 new high. Floor: 0.71355 -> 0.71359 (20p)
+2026-04-15 10:23:35,592 [Forex 10:23:35] cycle #878
+NAV: $99,988.33 | Balance: $99,979.37
+Margin: $257.34 | UPL: $+8.96
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.44
+  AUD_USD: LONG 5000u $+13.40
+Spreads: EUR_USD:1.4p GBP_USD:1.9p USD_JPY:1.4p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71559 new high. Floor: 0.71355 -> 0.71359 (20p)
+2026-04-15 10:24:36,364 [fx-AUD_USD-5125] TRAIL UP: 0.71566 new high. Floor: 0.71359 -> 0.71366 (20p)
+2026-04-15 10:24:37,293 [Forex 10:24:37] cycle #879
+NAV: $99,989.04 | Balance: $99,979.37
+Margin: $257.35 | UPL: $+9.67
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.08
+  AUD_USD: LONG 5000u $+13.70
+Spreads: EUR_USD:1.5p GBP_USD:1.9p USD_JPY:1.3p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71566 new high. Floor: 0.71359 -> 0.71366 (20p)
+2026-04-15 10:25:39,098 [Forex 10:25:39] cycle #880
+NAV: $99,988.57 | Balance: $99,979.37
+Margin: $257.34 | UPL: $+9.20
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.25
+  AUD_USD: LONG 5000u $+13.45
+Spreads: EUR_USD:1.6p GBP_USD:2.1p USD_JPY:1.2p
+Strategies: 1 active
+2026-04-15 10:26:46,249 [fx-AUD_USD-5125] TRAIL UP: 0.71576 new high. Floor: 0.71366 -> 0.71376 (20p)
+2026-04-15 10:26:47,216 [Forex 10:26:47] cycle #881
+NAV: $99,989.58 | Balance: $99,979.37
+Margin: $257.36 | UPL: $+10.21
+Positions: 2
+  USD_JPY: SHORT 3000u $-4.04
+  AUD_USD: LONG 5000u $+14.30
+Spreads: EUR_USD:1.6p GBP_USD:2.0p USD_JPY:1.4p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71576 new high. Floor: 0.71366 -> 0.71376 (20p)
+2026-04-15 10:27:48,017 [fx-AUD_USD-5125] TRAIL UP: 0.71593 new high. Floor: 0.71376 -> 0.71393 (20p)
+2026-04-15 10:27:48,908 [Forex 10:27:48] cycle #882
+NAV: $99,990.74 | Balance: $99,979.37
+Margin: $257.39 | UPL: $+11.37
+Positions: 2
+  USD_JPY: SHORT 3000u $-3.68
+  AUD_USD: LONG 5000u $+15.05
+Spreads: EUR_USD:1.7p GBP_USD:1.9p USD_JPY:1.7p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71593 new high. Floor: 0.71376 -> 0.71393 (20p)
+2026-04-15 10:28:49,911 [fx-AUD_USD-5125] TRAIL UP: 0.71605 new high. Floor: 0.71393 -> 0.71405 (20p)
+2026-04-15 10:28:50,425 [Forex 10:28:50] cycle #883
+NAV: $99,991.49 | Balance: $99,979.37
+Margin: $257.41 | UPL: $+12.12
+Positions: 2
+  USD_JPY: SHORT 3000u $-3.58
+  AUD_USD: LONG 5000u $+15.70
+Spreads: EUR_USD:1.7p GBP_USD:1.9p USD_JPY:1.6p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71605 new high. Floor: 0.71393 -> 0.71405 (20p)
+2026-04-15 10:29:51,267 [fx-AUD_USD-5125] TRAIL UP: 0.71623 new high. Floor: 0.71405 -> 0.71422 (20p)
+2026-04-15 10:29:52,128 [Forex 10:29:52] cycle #884
+NAV: $99,992.81 | Balance: $99,979.37
+Margin: $257.43 | UPL: $+13.44
+Positions: 2
+  USD_JPY: SHORT 3000u $-3.11
+  AUD_USD: LONG 5000u $+16.55
+Spreads: EUR_USD:1.6p GBP_USD:1.9p USD_JPY:1.5p
+Strategies: 1 active
+Actions:
+  [fx-AUD_USD-5125] TRAIL UP: 0.71623 new high. Floor: 0.71405 -> 0.71422 (20p)

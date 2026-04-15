@@ -205,34 +205,44 @@ def run_research(trader, session_type="midday", brain_mode="qwen"):
     return result
 
 
-def _ask_qwen(prompt):
-    """Ask Qwen 3.5 for research analysis."""
-    try:
-        resp = requests.post(
-            "http://localhost:11434/v1/chat/completions",
-            json={
-                "model": "qwen3.5:9b",
-                "messages": [
-                    {"role": "system", "content": (
-                        "You are a stock market research analyst. "
-                        "Provide concise, data-driven analysis. "
-                        "No speculation. Structure your output clearly. "
-                        "Keep under 300 words."
-                    )},
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0.3,
-            },
-            timeout=120,
-        )
-        resp.raise_for_status()
-        content = resp.json()["choices"][0]["message"].get("content", "")
-        # Strip think blocks
-        import re
-        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
-        return {"answer": content}
-    except Exception as e:
-        return {"answer": f"Qwen error: {e}"}
+def _ask_qwen(prompt, max_retries=3):
+    """Ask Qwen 3.5 for research analysis. Retries on failure, falls back to 4B."""
+    models = ["qwen3.5:9b", "qwen3.5:9b", "qwen3.5:4b"]  # 2 tries with 9B, fallback to 4B
+
+    for attempt in range(max_retries):
+        model = models[min(attempt, len(models) - 1)]
+        try:
+            resp = requests.post(
+                "http://localhost:11434/v1/chat/completions",
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": (
+                            "You are a stock market research analyst. "
+                            "Provide concise, data-driven analysis. "
+                            "No speculation. Structure your output clearly. "
+                            "Keep under 300 words."
+                        )},
+                        {"role": "user", "content": prompt},
+                    ],
+                    "temperature": 0.3,
+                },
+                timeout=180,
+            )
+            resp.raise_for_status()
+            content = resp.json()["choices"][0]["message"].get("content", "")
+            import re
+            content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
+            if content and len(content) > 20:
+                return {"answer": content, "model": model, "attempt": attempt + 1}
+        except Exception as e:
+            if attempt < max_retries - 1:
+                import time
+                time.sleep(5)  # Brief pause before retry
+                continue
+            return {"answer": f"Qwen failed after {max_retries} attempts: {e}"}
+
+    return {"answer": "Qwen returned empty response after all retries"}
 
 
 def pre_screen_research(trader):
