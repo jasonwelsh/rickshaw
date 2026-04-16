@@ -3,7 +3,7 @@
 ## What It Is
 Rickshaw is a local AI agent that runs on Qwen 3.5 via Ollama. It exists so that if cloud AI goes dark, you still have an intelligent agent on your hardware with tools, memory, and communication.
 
-Think of it as a local Opus replacement. Dumber, but runs forever on your GPU with zero internet dependency (except for tools that need APIs).
+Think of it as a local Opus replacement. Dumber, but runs forever on your GPU with zero internet dependency. Ollama, Qwen, memory, file tools, home automation, and 3D generation all run 100% local. Only the trading (Alpaca API) and messaging (Telegram) need internet.
 
 ## Why It Exists
 - Cloud AI can go offline, get rate-limited, or get expensive
