@@ -206,14 +206,16 @@ def run_research(trader, session_type="midday", brain_mode="qwen"):
 
 
 def _ask_qwen(prompt, max_retries=3):
-    """Ask Qwen 3.5 for research analysis. Retries on failure, falls back to 4B."""
-    models = ["qwen3.5:9b", "qwen3.5:9b", "qwen3.5:4b"]  # 2 tries with 9B, fallback to 4B
+    """Ask Qwen 3.5 for research analysis. Uses native Ollama API with think:false."""
+    models = ["qwen3.5:9b", "qwen3.5:9b", "qwen3.5:4b"]
 
     for attempt in range(max_retries):
         model = models[min(attempt, len(models) - 1)]
         try:
+            # Use Ollama native /api/chat with think:false
+            # The /v1/chat/completions endpoint breaks with Qwen's think mode
             resp = requests.post(
-                "http://localhost:11434/v1/chat/completions",
+                "http://localhost:11434/api/chat",
                 json={
                     "model": model,
                     "messages": [
@@ -225,12 +227,14 @@ def _ask_qwen(prompt, max_retries=3):
                         )},
                         {"role": "user", "content": prompt},
                     ],
-                    "temperature": 0.3,
+                    "stream": False,
+                    "think": False,
+                    "options": {"temperature": 0.3},
                 },
                 timeout=180,
             )
             resp.raise_for_status()
-            content = resp.json()["choices"][0]["message"].get("content", "")
+            content = resp.json().get("message", {}).get("content", "")
             import re
             content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
             if content and len(content) > 20:
@@ -238,7 +242,7 @@ def _ask_qwen(prompt, max_retries=3):
         except Exception as e:
             if attempt < max_retries - 1:
                 import time
-                time.sleep(5)  # Brief pause before retry
+                time.sleep(5)
                 continue
             return {"answer": f"Qwen failed after {max_retries} attempts: {e}"}
 

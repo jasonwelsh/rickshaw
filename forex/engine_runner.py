@@ -29,11 +29,11 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, PARENT_DIR)
 
-CONFIG_FILE = os.path.join(PARENT_DIR, "trader", "trader_config.json")
+CONFIG_FILE = os.path.join(SCRIPT_DIR, "forex_config.json")
 LOG_FILE = os.path.join(SCRIPT_DIR, "forex_engine.log")
 PID_FILE = os.path.join(SCRIPT_DIR, "forex_engine.pid")
 HEARTBEAT_FILE = os.path.join(os.path.expanduser("~"), "telegram-to-powershell", "heartbeats.json")
-RICKSHAW_DB = os.path.join(PARENT_DIR, "rickshaw.db")
+RICKSHAW_DB = os.path.join(PARENT_DIR, "rickshaw.db")  # Optional: Telegram config fallback
 
 DEFAULT_INTERVAL = 60  # 1 minute (forex moves faster than stocks)
 HEARTBEAT_INTERVAL = 5  # send heartbeat every N cycles (5 min at 60s interval)
@@ -280,7 +280,7 @@ def main():
         log.error("Missing OANDA keys in config. Run: python -m forex setup")
         sys.exit(1)
 
-    from trader.oanda_client import OandaTrader
+    from forex.oanda_client import OandaTrader
     from forex.strategies import tick, get_strategies, is_forex_open
 
     trader = OandaTrader(

@@ -8587,5 +8587,90 @@
       "neutral": 0
     },
     "signal_count": 10
+  },
+  {
+    "time": "2026-04-16T11:42:43.034711+00:00",
+    "instrument": "GBP_JPY",
+    "timeframe": "H1",
+    "price": 215.322,
+    "composite": {
+      "direction": 0,
+      "confidence": 0.017,
+      "recommendation": "no_trade",
+      "agreement": 0.25,
+      "signal_count": 11,
+      "bullish": 3,
+      "bearish": 5,
+      "neutral": 3
+    },
+    "signal_count": 11
+  },
+  {
+    "time": "2026-04-16T11:42:43.336048+00:00",
+    "instrument": "GBP_USD",
+    "timeframe": "H1",
+    "price": 1.354375,
+    "composite": {
+      "direction": 0,
+      "confidence": 0.005,
+      "recommendation": "no_trade",
+      "agreement": 0.091,
+      "signal_count": 12,
+      "bullish": 5,
+      "bearish": 6,
+      "neutral": 1
+    },
+    "signal_count": 12
+  },
+  {
+    "time": "2026-04-16T11:42:43.609599+00:00",
+    "instrument": "EUR_USD",
+    "timeframe": "H1",
+    "price": 1.1782249999999999,
+    "composite": {
+      "direction": 0,
+      "confidence": 0.006,
+      "recommendation": "no_trade",
+      "agreement": 0.111,
+      "signal_count": 10,
+      "bullish": 5,
+      "bearish": 4,
+      "neutral": 1
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-16T11:42:43.874702+00:00",
+    "instrument": "EUR_GBP",
+    "timeframe": "H1",
+    "price": 0.8699600000000001,
+    "composite": {
+      "direction": 0,
+      "confidence": 0.008,
+      "recommendation": "no_trade",
+      "agreement": 0.143,
+      "signal_count": 10,
+      "bullish": 4,
+      "bearish": 3,
+      "neutral": 3
+    },
+    "signal_count": 10
+  },
+  {
+    "time": "2026-04-16T11:42:44.154821+00:00",
+    "instrument": "EUR_CHF",
+    "timeframe": "H1",
+    "price": 0.92306,
+    "composite": {
+      "direction": 1,
+      "confidence": 0.018,
+      "recommendation": "no_trade",
+      "agreement": 0.111,
+      "signal_count": 10,
+      "bullish": 5,
+      "bearish": 4,
+      "neutral": 1
+    },
+    "signal_count": 10
   }
 ]

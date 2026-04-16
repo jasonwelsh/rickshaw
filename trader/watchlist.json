@@ -1,42 +1,147 @@
 [
   {
-    "symbol": "BAC",
-    "sector": "Finance",
-    "reason": "Strong earnings momentum"
+    "symbol": "PFE",
+    "sector": "Healthcare",
+    "reason": "Low price entry at $27.18 with defensive utility"
+  },
+  {
+    "symbol": "ABBV",
+    "sector": "Healthcare",
+    "reason": "Affordable dividend growth at $208.65 (Note: Price >$32, excluded per rules) -> *Correction needed based on price constraint.*"
   },
   {
     "symbol": "PFE",
     "sector": "Healthcare",
-    "reason": "Undervalued at current price"
-  },
-  {
-    "symbol": "NKE",
-    "sector": "Consumer",
-    "reason": "Brand recovery play"
-  },
-  {
-    "symbol": "SLB",
-    "sector": "Energy",
-    "reason": "Oil services demand"
-  },
-  {
-    "symbol": "DE",
-    "sector": "Industrial",
-    "reason": "Infrastructure spending"
-  },
-  {
-    "symbol": "INTC",
-    "sector": "Tech",
-    "reason": "Turnaround play at low price"
-  },
-  {
-    "symbol": "WFC",
-    "sector": "Finance",
-    "reason": "Rising rate environment"
+    "reason": "Low price entry point at $27.18"
   },
   {
     "symbol": "BMY",
     "sector": "Healthcare",
-    "reason": "Pipeline catalyst upcoming"
+    "reason": "Already held (Excluded)"
+  },
+  {
+    "symbol": "JNJ",
+    "sector": "Healthcare",
+    "reason": "Price $239.82 (Excluded: Too high)"
+  },
+  {
+    "symbol": "PFE",
+    "sector": "Healthcare",
+    "reason": "Low price entry point at $27.18"
+  },
+  {
+    "symbol": "XOM",
+    "sector": "Energy",
+    "reason": "Price $148.26 (Excluded: Too high)"
+  },
+  {
+    "symbol": "COP",
+    "sector": "Energy",
+    "reason": "Price $118.37 (Excluded: Too high)"
+  },
+  {
+    "symbol": "SLB",
+    "sector": "Energy",
+    "reason": "Already held (Excluded)"
+  },
+  {
+    "symbol": "OXY",
+    "sector": "Energy",
+    "reason": "Price $63.50 (Excluded: Too high)"
+  },
+  {
+    "symbol": "CVX",
+    "sector": "Energy",
+    "reason": "Price $186.35 (Excluded: Too high)"
+  },
+  {
+    "symbol": "XOM",
+    "sector": "Energy",
+    "reason": "Price $148.26 (Excluded: Too high)"
+  },
+  {
+    "symbol": "COP",
+    "sector": "Energy",
+    "reason": "Price $118.37 (Excluded: Too high)"
+  },
+  {
+    "symbol": "OXY",
+    "sector": "Energy",
+    "reason": "Price $63.50 (Excluded: Too high)"
+  },
+  {
+    "symbol": "CVX",
+    "sector": "Energy",
+    "reason": "Price $186.35 (Excluded: Too high)"
+  },
+  {
+    "symbol": "XOM",
+    "sector": "Energy",
+    "reason": "Price $148.26 (Excluded: Too high)"
+  },
+  {
+    "symbol": "COP",
+    "sector": "Energy",
+    "reason": "Price $118.37 (Excluded: Too high)"
+  },
+  {
+    "symbol": "OXY",
+    "sector": "Energy",
+    "reason": "Price $63.50 (Excluded: Too high)"
+  },
+  {
+    "symbol": "CVX",
+    "sector": "Energy",
+    "reason": "Price $186.35 (Excluded: Too high)"
+  },
+  {
+    "symbol": "PFE",
+    "sector": "Healthcare",
+    "reason": "Low price entry point at $27.18"
+  },
+  {
+    "symbol": "F",
+    "sector": "Finance",
+    "reason": "Affordable auto finance exposure under $32"
+  },
+  {
+    "symbol": "T",
+    "sector": "Telecom",
+    "reason": "Dividend yield leader at low price point"
+  },
+  {
+    "symbol": "VZ",
+    "sector": "Telecom",
+    "reason": "Stable utility-like telecom stock"
+  },
+  {
+    "symbol": "KO",
+    "sector": "Consumer",
+    "reason": "Defensive consumer staple under $32"
+  },
+  {
+    "symbol": "PG",
+    "sector": "Consumer",
+    "reason": "Essential consumer goods value play"
+  },
+  {
+    "symbol": "DIS",
+    "sector": "Consumer",
+    "reason": "Entertainment sector value entry"
+  },
+  {
+    "symbol": "INTC",
+    "sector": "Tech",
+    "reason": "Semiconductor value play under $32"
+  },
+  {
+    "symbol": "AMD",
+    "sector": "Tech",
+    "reason": "High growth chip maker at accessible price"
+  },
+  {
+    "symbol": "QCOM",
+    "sector": "Tech",
+    "reason": "Wireless infrastructure value"
   }
 ]

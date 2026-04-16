@@ -23,7 +23,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, PARENT_DIR)
 
-CONFIG_FILE = os.path.join(PARENT_DIR, "trader", "trader_config.json")
+CONFIG_FILE = os.path.join(SCRIPT_DIR, "forex_config.json")
 
 # Colors
 CYAN = "\033[36m"
@@ -51,7 +51,7 @@ POPULAR_PAIRS = [
 
 
 def load_trader():
-    from trader.oanda_client import OandaTrader
+    from forex.oanda_client import OandaTrader
     if not os.path.exists(CONFIG_FILE):
         print(f"{RED}Not configured. Run: python -m forex setup{RESET}")
         sys.exit(1)
@@ -80,7 +80,7 @@ def cmd_setup():
     # Test connection
     print(f"\n{DIM}Testing connection...{RESET}")
     try:
-        from trader.oanda_client import OandaTrader
+        from forex.oanda_client import OandaTrader
         trader = OandaTrader(key, account_id, practice=practice)
         acct = trader.get_account()
         print(f"{GREEN}Connected!{RESET}")

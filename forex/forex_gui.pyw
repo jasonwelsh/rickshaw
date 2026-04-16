@@ -16,7 +16,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, PARENT_DIR)
 
-CONFIG_FILE = os.path.join(PARENT_DIR, "trader", "trader_config.json")
+CONFIG_FILE = os.path.join(SCRIPT_DIR, "forex_config.json")
 STRATEGIES_FILE = os.path.join(SCRIPT_DIR, "forex_strategies.json")
 ENGINE_PID_FILE = os.path.join(SCRIPT_DIR, "forex_engine.pid")
 ENGINE_SCRIPT = os.path.join(SCRIPT_DIR, "engine_runner.py")
@@ -34,7 +34,7 @@ def load_trader():
         cfg = json.load(f)
     if not cfg.get("oanda_api_key") or not cfg.get("oanda_account_id"):
         return None
-    from trader.oanda_client import OandaTrader
+    from forex.oanda_client import OandaTrader
     return OandaTrader(cfg["oanda_api_key"], cfg["oanda_account_id"],
                        practice=cfg.get("oanda_practice", True))
 
