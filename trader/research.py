@@ -259,39 +259,41 @@ def pre_screen_research(trader):
     movers = get_market_movers(trader)
     portfolio = get_portfolio_summary(trader)
 
-    # Build focused prompt for ticker selection
-    by_sector = {}
-    for m in movers:
-        by_sector.setdefault(m["sector"], []).append(m)
+    # Get technical analysis for all stocks
+    from trader.technicals import analyze_batch, format_for_prompt
+    import json as _json
+    with open(os.path.join(SCRIPT_DIR, "trader_config.json")) as f:
+        cfg = _json.load(f)
+    all_symbols = [m["symbol"] for m in movers]
+    technicals = analyze_batch(cfg["alpaca_api_key"], cfg["alpaca_secret_key"], all_symbols)
+    tech_table = format_for_prompt(technicals)
 
-    prompt = f"""You are a pre-market stock screener for a small account (${portfolio['cash']:,.0f} cash).
+    prompt = f"""You are a stock research analyst for a small account (${portfolio['cash']:,.0f} cash).
 
 CURRENT POSITIONS: {', '.join(p['symbol'] for p in portfolio['positions']) if portfolio['positions'] else 'none'}
 
-MARKET DATA:
-"""
-    for sector, stocks in by_sector.items():
-        syms = " | ".join(f"{s['symbol']}:${s['price']}" for s in stocks)
-        prompt += f"  {sector}: {syms}\n"
+TECHNICAL DATA (30 days):
+{tech_table}
 
-    prompt += f"""
-TASK: Pick exactly 10 stock tickers to screen for buying today.
+TASK: Pick exactly 8 stocks to buy today based on the technical data above.
 
 RULES:
 - Must be affordable (price under ${portfolio['cash'] * 0.9:.0f})
 - Diversify across sectors (max 2 per sector)
 - Don't pick stocks we already hold
-- Prefer stocks showing momentum (price movement)
-- Include at least 1 from each sector if affordable
+- RSI under 70 (not overbought)
+- Prefer stocks above their SMA5 AND SMA20 (uptrend)
+- Prefer volume ratio above 1.0 (active trading)
+- Avoid RSI under 30 unless it's a clear reversal setup
 
-OUTPUT FORMAT (exactly this, one per line):
+OUTPUT FORMAT (exactly this, one per line, nothing else):
 SYMBOL|SECTOR|REASON
 
 Example:
-BAC|Finance|Strong banking sector momentum
-PFE|Healthcare|Low price entry point at $27
+BAC|Finance|RSI 55 uptrend above both SMAs vol ratio 1.3
+PFE|Healthcare|RSI 42 oversold bounce price above SMA5
 
-Output ONLY the 10 lines, nothing else."""
+Output ONLY the 8 lines. No explanation. No markdown. No headers."""
 
     answer = _ask_qwen(prompt)
     report = answer.get("answer", "")

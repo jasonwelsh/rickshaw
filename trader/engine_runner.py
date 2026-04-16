@@ -231,6 +231,21 @@ def main():
             if market_open and last_screen_date != today:
                 last_screen_date = today
                 try:
+                    # Step 0: Sell any orphaned positions (no strategy managing them)
+                    from trader.strategies import get_strategies
+                    active_symbols = {s["symbol"] for s in get_strategies() if s["status"] in ("active", "pending_fill")}
+                    positions = trader.get_positions()
+                    for p in positions:
+                        if p["symbol"] not in active_symbols:
+                            try:
+                                trader.sell(p["symbol"], int(float(p["qty"])))
+                                log.info(f"Sold orphaned position: {p['symbol']} {p['qty']} shares")
+                            except Exception as e:
+                                log.warning(f"Failed to sell {p['symbol']}: {e}")
+                    if positions and not active_symbols:
+                        import time as _time
+                        _time.sleep(3)  # Wait for sells to settle
+
                     # Step 1: Qwen researches and builds watchlist
                     from trader.research import pre_screen_research
                     log.info("Running pre-screen research (Qwen)...")
