@@ -2,41 +2,41 @@
   {
     "symbol": "NKE",
     "sector": "Consumer",
-    "reason": "RSI 30.1 oversold bounce price above SMA5 volume ratio 2.34"
+    "reason": "RSI 33.7 (neutral), above SMA5, strong 5D momentum (+8.0%)."
   },
   {
     "symbol": "SLB",
     "sector": "Energy",
-    "reason": "RSI 52.4 neutral uptrend above both SMAs volume ratio 2.08"
+    "reason": "RSI 51.5 (neutral), above SMA5/20, positive 20D trend (+18.2%)."
   },
   {
-    "symbol": "BMY",
+    "symbol": "BAC",
+    "sector": "Financial",
+    "reason": "RSI 81.9 (overbought risk), but above SMA5/20 with high VRAT 0.2."
+  },
+  {
+    "symbol": "WMT",
+    "sector": "Consumer",
+    "reason": "RSI 57.5 (neutral), above SMA5/20, stable volume ratio 0.14."
+  },
+  {
+    "symbol": "UNH",
     "sector": "Healthcare",
-    "reason": "RSI 52.4 neutral uptrend above both SMAs volume ratio 1.4"
+    "reason": "RSI 81.4 (overbought risk), above SMA5/20, strong 5D gain (+3.1%)."
   },
   {
-    "symbol": "OXY",
-    "sector": "Energy",
-    "reason": "RSI 30.9 oversold bounce price above SMA5 volume ratio 1.48"
+    "symbol": "V",
+    "sector": "Financial",
+    "reason": "RSI 60.6 (neutral), above SMA5/20, solid 5D performance (+3.8%)."
   },
   {
-    "symbol": "COP",
-    "sector": "Energy",
-    "reason": "RSI 32.8 oversold bounce price above SMA5 volume ratio 1.4"
+    "symbol": "GOOG",
+    "sector": "Technology",
+    "reason": "RSI 86.6 (overbought), above SMA5/20, exceptional 5D surge (+5.6%)."
   },
   {
-    "symbol": "PFE",
-    "sector": "Healthcare",
-    "reason": "RSI 48.8 neutral price above SMA5 volume ratio 1.23"
-  },
-  {
-    "symbol": "JNJ",
-    "sector": "Healthcare",
-    "reason": "RSI 46.9 neutral price above SMA5 volume ratio 1.23"
-  },
-  {
-    "symbol": "GE",
-    "sector": "Industrials",
-    "reason": "RSI 58.3 neutral uptrend above both SMAs volume ratio 2.26"
+    "symbol": "MCD",
+    "sector": "Consumer",
+    "reason": "RSI 46.8 (neutral), above SMA5, decent 5D stability (+0.4%)."
   }
 ]

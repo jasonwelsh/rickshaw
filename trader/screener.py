@@ -299,19 +299,29 @@ def auto_deploy(trader, api_key, secret_key, max_positions=8, shares_per=5,
     except Exception:
         total_cash = 500
 
-    picks = run_screen(trader, api_key, secret_key, top_n=slots, max_budget=total_cash)
+    # Get MORE picks than slots so we have fallbacks if some are too expensive
+    picks = run_screen(trader, api_key, secret_key, top_n=slots * 3, max_budget=total_cash)
     deployed = []
 
-    for pick in picks:
+    # Sort affordable picks by score, filter by what we can actually buy
+    affordable_picks = [p for p in picks if p["price"] <= total_cash * 0.9 and p["price"] > 0]
+
+    for pick in affordable_picks:
+        if len(deployed) >= slots:
+            break
+        if total_cash < 10:
+            break
+
         sym = pick["symbol"]
         price = pick["price"]
 
-        # Skip if we can't afford even 1 share
+        # Skip if we can't afford even 1 share with remaining cash
         if price > total_cash * 0.9:
             continue
 
-        # Adjust qty based on price to keep position sizes roughly equal
-        target_size = max(50, total_cash / max_positions)
+        # Size: split remaining cash evenly across remaining slots
+        remaining_slots = slots - len(deployed)
+        target_size = max(price, total_cash / max(1, remaining_slots))
         qty = max(1, int(target_size / price))
 
         # Ladder drops scale with score — higher score = more aggressive ladders

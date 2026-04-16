@@ -268,32 +268,40 @@ def pre_screen_research(trader):
     technicals = analyze_batch(cfg["alpaca_api_key"], cfg["alpaca_secret_key"], all_symbols)
     tech_table = format_for_prompt(technicals)
 
-    prompt = f"""You are a stock research analyst for a small account (${portfolio['cash']:,.0f} cash).
+    # Filter technicals to only affordable stocks BEFORE showing Qwen
+    max_price = portfolio['cash'] * 0.85
+    affordable = [a for a in technicals if not a.get("error") and a.get("price", 9999) <= max_price]
+    affordable.sort(key=lambda x: x.get("price", 0))
 
-CURRENT POSITIONS: {', '.join(p['symbol'] for p in portfolio['positions']) if portfolio['positions'] else 'none'}
+    if not affordable:
+        return []
 
-TECHNICAL DATA (30 days):
-{tech_table}
+    from trader.technicals import format_for_prompt as _fmt
+    affordable_table = _fmt(affordable)
 
-TASK: Pick exactly 8 stocks to buy today based on the technical data above.
+    held = ', '.join(p['symbol'] for p in portfolio['positions']) if portfolio['positions'] else 'none'
 
-RULES:
-- Must be affordable (price under ${portfolio['cash'] * 0.9:.0f})
-- Diversify across sectors (max 2 per sector)
-- Don't pick stocks we already hold
-- RSI under 70 (not overbought)
-- Prefer stocks above their SMA5 AND SMA20 (uptrend)
-- Prefer volume ratio above 1.0 (active trading)
-- Avoid RSI under 30 unless it's a clear reversal setup
+    prompt = f"""You are picking stocks for a ${portfolio['cash']:,.0f} account. ONLY pick from the stocks shown below.
 
-OUTPUT FORMAT (exactly this, one per line, nothing else):
+BUDGET: ${portfolio['cash']:,.0f} (each stock must be under ${max_price:.0f})
+ALREADY HOLD: {held}
+
+AFFORDABLE STOCKS WITH TECHNICAL DATA:
+{affordable_table}
+
+Pick exactly 8 stocks from the table above. Use the data to make smart picks.
+
+SELECTION CRITERIA:
+- RSI between 30-70 (not overbought or deeply oversold)
+- Above SMA5 preferred (short term uptrend)
+- Volume ratio above 1.0 (actively traded)
+- Spread across different sectors
+- Do NOT pick stocks already held
+
+OUTPUT exactly 8 lines, this format only:
 SYMBOL|SECTOR|REASON
 
-Example:
-BAC|Finance|RSI 55 uptrend above both SMAs vol ratio 1.3
-PFE|Healthcare|RSI 42 oversold bounce price above SMA5
-
-Output ONLY the 8 lines. No explanation. No markdown. No headers."""
+No other text. No headers. No explanation. Just 8 lines."""
 
     answer = _ask_qwen(prompt)
     report = answer.get("answer", "")

@@ -296,5 +296,221 @@
       }
     ],
     "report": "NKE|Consumer|RSI 30.1 oversold bounce price above SMA5 volume ratio 2.34\nSLB|Energy|RSI 52.4 neutral uptrend above both SMAs volume ratio 2.08\nBMY|Healthcare|RSI 52.4 neutral uptrend above both SMAs volume ratio 1.4\nOXY|Energy|RSI 30.9 oversold bounce price above SMA5 volume ratio 1.48\nCOP|Energy|RSI 32.8 oversold bounce price above SMA5 volume ratio 1.4\nPFE|Healthcare|RSI 48.8 neutral price above SMA5 volume ratio 1.23\nJNJ|Healthcare|RSI 46.9 neutral price above SMA5 volume ratio 1.23\nGE|Industrials|RSI 58.3 neutral uptrend above both SMAs volume ratio 2.26"
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-16T09:31:29.100075",
+    "mode": "qwen",
+    "picks": [
+      {
+        "symbol": "AAPL",
+        "sector": "Technology",
+        "reason": "RSI 67.2 uptrend above SMAs vol ratio 1.73"
+      },
+      {
+        "symbol": "MSFT",
+        "sector": "Technology",
+        "reason": "RSI 75.5 overbought skip"
+      },
+      {
+        "symbol": "NVDA",
+        "sector": "Technology",
+        "reason": "RSI 71.4 overbought skip"
+      },
+      {
+        "symbol": "GOOG",
+        "sector": "Technology",
+        "reason": "RSI 78.0 overbought skip"
+      },
+      {
+        "symbol": "META",
+        "sector": "Technology",
+        "reason": "RSI 66.9 overbought skip"
+      },
+      {
+        "symbol": "AMZN",
+        "sector": "Technology",
+        "reason": "RSI 78.5 overbought skip"
+      },
+      {
+        "symbol": "BAC",
+        "sector": "Finance",
+        "reason": "Hold existing position"
+      },
+      {
+        "symbol": "BMY",
+        "sector": "Healthcare",
+        "reason": "Price $104.30 exceeds $32 limit"
+      },
+      {
+        "symbol": "NKE",
+        "sector": "Consumer",
+        "reason": "Price $46.01 exceeds $32 limit"
+      },
+      {
+        "symbol": "OXY",
+        "sector": "Energy",
+        "reason": "Price $62.10 exceeds $32 limit"
+      },
+      {
+        "symbol": "SLB",
+        "sector": "Energy",
+        "reason": "Price $52.43 exceeds $32 limit"
+      },
+      {
+        "symbol": "JPM",
+        "sector": "Finance",
+        "reason": "Price $305.87 exceeds $32 limit"
+      },
+      {
+        "symbol": "GS",
+        "sector": "Finance",
+        "reason": "Price $899.50 exceeds $32 limit"
+      },
+      {
+        "symbol": "V",
+        "sector": "Finance",
+        "reason": "Price $315.90 exceeds $32 limit"
+      },
+      {
+        "symbol": "MA",
+        "sector": "Finance",
+        "reason": "Price $520.10 exceeds $32 limit"
+      },
+      {
+        "symbol": "XOM",
+        "sector": "Energy",
+        "reason": "Price $149.00 exceeds $32 limit"
+      },
+      {
+        "symbol": "CVX",
+        "sector": "Energy",
+        "reason": "Price $184.84 exceeds $32 limit"
+      },
+      {
+        "symbol": "COP",
+        "sector": "Energy",
+        "reason": "Price $118.93 exceeds $32 limit"
+      },
+      {
+        "symbol": "UNH",
+        "sector": "Healthcare",
+        "reason": "Price $314.09 exceeds $32 limit"
+      },
+      {
+        "symbol": "JNJ",
+        "sector": "Healthcare",
+        "reason": "Price $238.62 exceeds $32 limit"
+      },
+      {
+        "symbol": "LLY",
+        "sector": "Healthcare",
+        "reason": "Price $905.48 exceeds $32 limit"
+      },
+      {
+        "symbol": "PFE",
+        "sector": "Healthcare",
+        "reason": "RSI 48.8 price above SMA5 vol ratio 1.23"
+      },
+      {
+        "symbol": "ABBV",
+        "sector": "Healthcare",
+        "reason": "Price $208.16 exceeds $32 limit"
+      },
+      {
+        "symbol": "CAT",
+        "sector": "Industrials",
+        "reason": "Price $765.84 exceeds $32 limit"
+      },
+      {
+        "symbol": "DE",
+        "sector": "Industrials",
+        "reason": "Price $571.83 exceeds $32 limit"
+      },
+      {
+        "symbol": "BA",
+        "sector": "Industrials",
+        "reason": "Price $224.79 exceeds $32 limit"
+      },
+      {
+        "symbol": "HON",
+        "sector": "Industrials",
+        "reason": "Price $232.68 exceeds $32 limit"
+      },
+      {
+        "symbol": "GE",
+        "sector": "Industrials",
+        "reason": "Price $312.99 exceeds $32 limit"
+      },
+      {
+        "symbol": "WMT",
+        "sector": "Consumer",
+        "reason": "Price $124.30 exceeds $32 limit"
+      },
+      {
+        "symbol": "COST",
+        "sector": "Consumer",
+        "reason": "Price $984.45 exceeds $32 limit"
+      },
+      {
+        "symbol": "HD",
+        "sector": "Consumer",
+        "reason": "Price $340.12 exceeds $32 limit"
+      },
+      {
+        "symbol": "MCD",
+        "sector": "Consumer",
+        "reason": "Price $306.68 exceeds $32 limit"
+      }
+    ],
+    "report": "AAPL|Technology|RSI 67.2 uptrend above SMAs vol ratio 1.73\nMSFT|Technology|RSI 75.5 overbought skip\nNVDA|Technology|RSI 71.4 overbought skip\nGOOG|Technology|RSI 78.0 overbought skip\nMETA|Technology|RSI 66.9 overbought skip\nAMZN|Technology|RSI 78.5 overbought skip\nBAC|Finance|Hold existing position\nBMY|Healthcare|Price $104.30 exceeds $32 limit\nNKE|Consumer|Price $46.01 exceeds $32 limit\nOXY|Energy|Price $62.10 exceeds $32 limit\nSLB|Energy|Price $52.43 exceeds $32 limit\nJPM|Finance|Price $305.87 exceeds $32 limit\nGS|Finance|Price $899.50 exceeds $32 limit\nV|Finance|Price $315.90 exceeds $32 limit\nMA|Finance|Price $520.10 exceeds $32 limit\nXOM|Energy|Price $149.00 exceeds $32 limit\nCVX|Energy|Price $184.84 exceeds $32 limit\nCOP|Energy|Price $118.93 exceeds $32 limit\nUNH|Healthcare|Price $314.09 exceeds $32 limit\nJNJ|Healthcare|Price $238.62 exceeds $32 limit\nLLY|Healthcare|Price $905.48 exceeds $32 limit\nPFE|Healthcare|RSI 48.8 price above SMA5 vol ratio 1.23\nABBV|Healthcare|Price $208.16 exceeds $32 limit\nCAT|Industrials|Price $765.84 exceeds $32 limit\nDE|Industrials|Price $571.83 exceeds $32 limit\nBA|Industrials|Price $224.79 exceeds $32 limit\nHON|Industrials|Price $232.68 exceeds $32 limit\nGE|Industrials|Price $312.99 exceeds $32 limit\nWMT|Consumer|Price $124.30 exceeds $32 limit\nCOST|Consumer|Price $984.45 exceeds $32 limit\nHD|Consumer|Price $340.12 exceeds $32 limit\nMCD|Consumer|Price $306.68 exceeds $32 limit"
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-16T09:57:22.888954",
+    "mode": "qwen",
+    "picks": [
+      {
+        "symbol": "NKE",
+        "sector": "Consumer",
+        "reason": "RSI 33.7 (neutral), above SMA5, strong 5D momentum (+8.0%)."
+      },
+      {
+        "symbol": "SLB",
+        "sector": "Energy",
+        "reason": "RSI 51.5 (neutral), above SMA5/20, positive 20D trend (+18.2%)."
+      },
+      {
+        "symbol": "BAC",
+        "sector": "Financial",
+        "reason": "RSI 81.9 (overbought risk), but above SMA5/20 with high VRAT 0.2."
+      },
+      {
+        "symbol": "WMT",
+        "sector": "Consumer",
+        "reason": "RSI 57.5 (neutral), above SMA5/20, stable volume ratio 0.14."
+      },
+      {
+        "symbol": "UNH",
+        "sector": "Healthcare",
+        "reason": "RSI 81.4 (overbought risk), above SMA5/20, strong 5D gain (+3.1%)."
+      },
+      {
+        "symbol": "V",
+        "sector": "Financial",
+        "reason": "RSI 60.6 (neutral), above SMA5/20, solid 5D performance (+3.8%)."
+      },
+      {
+        "symbol": "GOOG",
+        "sector": "Technology",
+        "reason": "RSI 86.6 (overbought), above SMA5/20, exceptional 5D surge (+5.6%)."
+      },
+      {
+        "symbol": "MCD",
+        "sector": "Consumer",
+        "reason": "RSI 46.8 (neutral), above SMA5, decent 5D stability (+0.4%)."
+      }
+    ],
+    "report": "NKE|Consumer|RSI 33.7 (neutral), above SMA5, strong 5D momentum (+8.0%).\nSLB|Energy|RSI 51.5 (neutral), above SMA5/20, positive 20D trend (+18.2%).\nBAC|Financial|RSI 81.9 (overbought risk), but above SMA5/20 with high VRAT 0.2.\nWMT|Consumer|RSI 57.5 (neutral), above SMA5/20, stable volume ratio 0.14.\nUNH|Healthcare|RSI 81.4 (overbought risk), above SMA5/20, strong 5D gain (+3.1%).\nV|Financial|RSI 60.6 (neutral), above SMA5/20, solid 5D performance (+3.8%).\nGOOG|Technology|RSI 86.6 (overbought), above SMA5/20, exceptional 5D surge (+5.6%).\nMCD|Consumer|RSI 46.8 (neutral), above SMA5, decent 5D stability (+0.4%)."
   }
 ]
