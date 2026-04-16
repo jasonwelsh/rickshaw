@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "symbol": "BAC",
+    "sector": "Finance",
+    "reason": "Strong earnings momentum"
+  },
+  {
+    "symbol": "PFE",
+    "sector": "Healthcare",
+    "reason": "Undervalued at current price"
+  },
+  {
+    "symbol": "NKE",
+    "sector": "Consumer",
+    "reason": "Brand recovery play"
+  },
+  {
+    "symbol": "SLB",
+    "sector": "Energy",
+    "reason": "Oil services demand"
+  },
+  {
+    "symbol": "DE",
+    "sector": "Industrial",
+    "reason": "Infrastructure spending"
+  },
+  {
+    "symbol": "INTC",
+    "sector": "Tech",
+    "reason": "Turnaround play at low price"
+  },
+  {
+    "symbol": "WFC",
+    "sector": "Finance",
+    "reason": "Rising rate environment"
+  },
+  {
+    "symbol": "BMY",
+    "sector": "Healthcare",
+    "reason": "Pipeline catalyst upcoming"
+  }
+]

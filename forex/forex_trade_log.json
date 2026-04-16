@@ -68,5 +68,23 @@
     "price": 1.17734,
     "pnl_pips": -24.9,
     "pnl_usd": -12.45
+  },
+  {
+    "time": "2026-04-16T02:42:04.481414+00:00",
+    "strategy": "fx-AUD_USD-5125",
+    "action": "take_profit",
+    "instrument": "AUD_USD",
+    "units": 2500,
+    "price": 0.71888,
+    "pnl_pips": 60.3
+  },
+  {
+    "time": "2026-04-16T08:07:30.938837+00:00",
+    "strategy": "fx-AUD_USD-5125",
+    "action": "stop_close",
+    "instrument": "AUD_USD",
+    "price": 0.71759,
+    "pnl_pips": 47.4,
+    "pnl_usd": 11.85
   }
 ]

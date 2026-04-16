@@ -187,7 +187,7 @@
     "id": "fx-AUD_USD-5125",
     "type": "forex_trailing_stop",
     "instrument": "AUD_USD",
-    "status": "active",
+    "status": "closed",
     "created": "2026-04-14T22:18:45.898936+00:00",
     "config": {
       "initial_units": 5000,
@@ -199,13 +199,13 @@
     },
     "state": {
       "entry_price": 0.71285,
-      "highest_price": 0.716225,
-      "current_floor": 0.714225,
+      "highest_price": 0.719635,
+      "current_floor": 0.717635,
       "take_profit_price": 0.71885,
-      "total_units": 5000,
-      "total_cost": 3564.25,
+      "total_units": 2500,
+      "total_cost": 1782.125,
       "ladders_triggered": [],
-      "profit_taken": false
+      "profit_taken": true
     },
     "log": [
       {
@@ -412,6 +412,216 @@
         "time": "2026-04-15T14:29:51.263073+00:00",
         "action": "trail_up",
         "msg": "TRAIL UP: 0.71623 new high. Floor: 0.71405 -> 0.71422 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:18:44.285951+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71624 new high. Floor: 0.71422 -> 0.71424 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:19:45.871149+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71629 new high. Floor: 0.71424 -> 0.71429 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:20:47.100118+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71630 new high. Floor: 0.71429 -> 0.71430 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:22:48.463506+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71643 new high. Floor: 0.71430 -> 0.71443 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:26:05.452078+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71652 new high. Floor: 0.71443 -> 0.71452 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:27:06.781522+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71656 new high. Floor: 0.71452 -> 0.71456 (20p)"
+      },
+      {
+        "time": "2026-04-15T15:28:07.938800+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71660 new high. Floor: 0.71456 -> 0.71460 (20p)"
+      },
+      {
+        "time": "2026-04-15T16:21:26.623202+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71666 new high. Floor: 0.71460 -> 0.71466 (20p)"
+      },
+      {
+        "time": "2026-04-15T16:22:27.816114+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71669 new high. Floor: 0.71466 -> 0.71469 (20p)"
+      },
+      {
+        "time": "2026-04-15T16:23:28.929401+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71684 new high. Floor: 0.71469 -> 0.71484 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:05:23.885224+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71686 new high. Floor: 0.71484 -> 0.71486 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:06:25.121657+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71695 new high. Floor: 0.71486 -> 0.71495 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:10:34.961948+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71701 new high. Floor: 0.71495 -> 0.71501 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:13:36.362223+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71703 new high. Floor: 0.71501 -> 0.71503 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:14:37.516244+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71703 new high. Floor: 0.71503 -> 0.71503 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:15:45.148885+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71712 new high. Floor: 0.71503 -> 0.71512 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:16:46.357196+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71714 new high. Floor: 0.71512 -> 0.71514 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:17:47.553030+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71729 new high. Floor: 0.71514 -> 0.71529 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:49:59.455123+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71731 new high. Floor: 0.71529 -> 0.71531 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:51:00.762729+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71747 new high. Floor: 0.71531 -> 0.71547 (20p)"
+      },
+      {
+        "time": "2026-04-15T18:53:20.663797+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71752 new high. Floor: 0.71547 -> 0.71552 (20p)"
+      },
+      {
+        "time": "2026-04-15T19:04:06.460020+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71761 new high. Floor: 0.71552 -> 0.71561 (20p)"
+      },
+      {
+        "time": "2026-04-15T19:05:07.800298+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71776 new high. Floor: 0.71561 -> 0.71576 (20p)"
+      },
+      {
+        "time": "2026-04-16T00:52:11.520426+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71778 new high. Floor: 0.71576 -> 0.71578 (20p)"
+      },
+      {
+        "time": "2026-04-16T01:54:44.940195+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71781 new high. Floor: 0.71578 -> 0.71581 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:00:53.652633+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71793 new high. Floor: 0.71581 -> 0.71593 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:01:54.962311+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71816 new high. Floor: 0.71593 -> 0.71616 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:28:35.331238+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71816 new high. Floor: 0.71616 -> 0.71616 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:29:43.318851+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71825 new high. Floor: 0.71616 -> 0.71625 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:30:44.486931+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71839 new high. Floor: 0.71625 -> 0.71639 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:31:45.729575+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71857 new high. Floor: 0.71639 -> 0.71657 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:32:46.892731+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71863 new high. Floor: 0.71657 -> 0.71663 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:40:02.965061+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71866 new high. Floor: 0.71663 -> 0.71666 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:42:04.481414+00:00",
+        "action": "take_profit",
+        "msg": "PROFIT TAKE: Sold 2500 AUD_USD @ 0.71888 (+60.3p). Floor \u2192 breakeven 0.71285"
+      },
+      {
+        "time": "2026-04-16T02:42:04.494672+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71888 new high. Floor: 0.71666 -> 0.71688 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:43:05.826497+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71910 new high. Floor: 0.71688 -> 0.71710 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:44:07.576872+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71918 new high. Floor: 0.71710 -> 0.71718 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:45:15.180806+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71928 new high. Floor: 0.71718 -> 0.71728 (20p)"
+      },
+      {
+        "time": "2026-04-16T02:46:16.541452+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71928 new high. Floor: 0.71728 -> 0.71728 (20p)"
+      },
+      {
+        "time": "2026-04-16T03:07:47.494331+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71950 new high. Floor: 0.71728 -> 0.71750 (20p)"
+      },
+      {
+        "time": "2026-04-16T03:08:48.690303+00:00",
+        "action": "trail_up",
+        "msg": "TRAIL UP: 0.71964 new high. Floor: 0.71750 -> 0.71764 (20p)"
+      },
+      {
+        "time": "2026-04-16T08:07:30.937838+00:00",
+        "action": "stop_close",
+        "msg": "STOP HIT: Closed AUD_USD @ 0.71759. P&L: +47.4 pips (~$+11.85)"
       }
     ]
   },

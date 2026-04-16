@@ -2864,3 +2864,11 @@ Spreads: EUR_USD:1.6p GBP_USD:1.9p USD_JPY:1.5p
 Strategies: 1 active
 Actions:
   [fx-AUD_USD-5125] TRAIL UP: 0.71623 new high. Floor: 0.71405 -> 0.71422 (20p)
+2026-04-15 10:30:57,435 [Forex 10:30:57] cycle #885
+NAV: $99,990.38 | Balance: $99,979.37
+Margin: $257.38 | UPL: $+11.01
+Positions: 2
+  USD_JPY: SHORT 3000u $-3.79
+  AUD_USD: LONG 5000u $+14.60
+Spreads: EUR_USD:1.6p GBP_USD:1.9p USD_JPY:1.8p
+Strategies: 1 active
