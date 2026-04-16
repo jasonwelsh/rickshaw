@@ -416,6 +416,20 @@ class TraderApp(tk.Tk):
             self.research_frame.pack_forget()
 
     def _load_last_research(self):
+        # Try daily report first, fall back to research log
+        try:
+            from trader.daily_report import format_report, get_latest_report_date
+            date = get_latest_report_date()
+            if date:
+                report = format_report(date)
+                self.research_text.config(state="normal")
+                self.research_text.delete("1.0", "end")
+                self.research_text.insert("1.0", report)
+                self.research_text.config(state="disabled")
+                return
+        except Exception:
+            pass
+
         from trader.research import get_last_research
         last = get_last_research()
         self.research_text.config(state="normal")
@@ -424,7 +438,7 @@ class TraderApp(tk.Tk):
             header = f"[{last.get('session', '?').upper()}] {last.get('time', '?')[:19]} ({last.get('mode', '?')} brain)\n\n"
             self.research_text.insert("1.0", header + last.get("report", "No report"))
         else:
-            self.research_text.insert("1.0", "No research reports yet. Click 'Force Research Now'.")
+            self.research_text.insert("1.0", "No reports yet. Click 'Force Research Now'.")
         self.research_text.config(state="disabled")
 
     def force_research(self):

@@ -1,42 +1,42 @@
 [
   {
+    "symbol": "PFE",
+    "sector": "Healthcare",
+    "reason": "RSI 47.8 neutral, above SMA5, low volatility suitable for core holding."
+  },
+  {
     "symbol": "NKE",
-    "sector": "Consumer",
-    "reason": "RSI 33.7 (neutral), above SMA5, strong 5D momentum (+8.0%)."
+    "sector": "Consumer Discretionary",
+    "reason": "RSI 33.2 oversold bounce, strong 5-day gain (+7.7%), above SMA5."
   },
   {
     "symbol": "SLB",
     "sector": "Energy",
-    "reason": "RSI 51.5 (neutral), above SMA5/20, positive 20D trend (+18.2%)."
+    "reason": "RSI 50.0 neutral, above both SMAs, high 20-day momentum (+17.5%)."
   },
   {
     "symbol": "BAC",
-    "sector": "Financial",
-    "reason": "RSI 81.9 (overbought risk), but above SMA5/20 with high VRAT 0.2."
+    "sector": "Financials",
+    "reason": "RSI 82.4 overbought, excluded per instruction to avoid already held."
   },
   {
-    "symbol": "WMT",
-    "sector": "Consumer",
-    "reason": "RSI 57.5 (neutral), above SMA5/20, stable volume ratio 0.14."
+    "symbol": "COP",
+    "sector": "Energy",
+    "reason": "Not listed in provided table, excluded per instruction."
   },
   {
-    "symbol": "UNH",
+    "symbol": "PFE",
     "sector": "Healthcare",
-    "reason": "RSI 81.4 (overbought risk), above SMA5/20, strong 5D gain (+3.1%)."
+    "reason": "Duplicate symbol, excluded to meet unique selection count."
   },
   {
-    "symbol": "V",
-    "sector": "Financial",
-    "reason": "RSI 60.6 (neutral), above SMA5/20, solid 5D performance (+3.8%)."
+    "symbol": "NKE",
+    "sector": "Consumer Discretionary",
+    "reason": "Duplicate symbol, excluded to meet unique selection count."
   },
   {
-    "symbol": "GOOG",
-    "sector": "Technology",
-    "reason": "RSI 86.6 (overbought), above SMA5/20, exceptional 5D surge (+5.6%)."
-  },
-  {
-    "symbol": "MCD",
-    "sector": "Consumer",
-    "reason": "RSI 46.8 (neutral), above SMA5, decent 5D stability (+0.4%)."
+    "symbol": "SLB",
+    "sector": "Energy",
+    "reason": "Duplicate symbol, excluded to meet unique selection count."
   }
 ]

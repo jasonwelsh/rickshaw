@@ -1,0 +1,147 @@
+{
+  "date": "2026-04-16",
+  "start_value": 498.52,
+  "end_value": null,
+  "start_cash": 45.42,
+  "end_cash": null,
+  "pnl_realized": 0,
+  "pnl_unrealized": 0,
+  "day_trades_used": 0,
+  "events": [
+    {
+      "time": "10:22:28",
+      "type": "market_open",
+      "message": "Market opened. Portfolio: $498.52 Cash: $45.42"
+    },
+    {
+      "time": "10:22:28",
+      "type": "research",
+      "message": "Qwen picked 8 stocks: PFE, NKE, SLB, BAC, COP, PFE, NKE, SLB"
+    },
+    {
+      "time": "10:22:30",
+      "type": "deploy",
+      "message": "Deployed 1x BAC @ $54.15 (score=70, ?)"
+    },
+    {
+      "time": "10:22:30",
+      "type": "deploy",
+      "message": "Deployed 1x COP @ $121.29 (score=70, ?)"
+    },
+    {
+      "time": "10:22:30",
+      "type": "deploy",
+      "message": "Deployed 1x NKE @ $45.86 (score=70, ?)"
+    },
+    {
+      "time": "10:22:30",
+      "type": "deploy",
+      "message": "Deployed 2x PFE @ $27.33 (score=70, ?)"
+    },
+    {
+      "time": "10:22:30",
+      "type": "deploy",
+      "message": "Deployed 1x SLB @ $52.38 (score=70, ?)"
+    },
+    {
+      "time": "10:22:30",
+      "type": "deploy",
+      "message": "Deployed 1x WMT @ $124.96 (score=70, ?)"
+    }
+  ],
+  "research_picks": [
+    {
+      "symbol": "PFE",
+      "sector": "Healthcare",
+      "reason": "RSI 47.8 neutral, above SMA5, low volatility suitable for core holding."
+    },
+    {
+      "symbol": "NKE",
+      "sector": "Consumer Discretionary",
+      "reason": "RSI 33.2 oversold bounce, strong 5-day gain (+7.7%), above SMA5."
+    },
+    {
+      "symbol": "SLB",
+      "sector": "Energy",
+      "reason": "RSI 50.0 neutral, above both SMAs, high 20-day momentum (+17.5%)."
+    },
+    {
+      "symbol": "BAC",
+      "sector": "Financials",
+      "reason": "RSI 82.4 overbought, excluded per instruction to avoid already held."
+    },
+    {
+      "symbol": "COP",
+      "sector": "Energy",
+      "reason": "Not listed in provided table, excluded per instruction."
+    },
+    {
+      "symbol": "PFE",
+      "sector": "Healthcare",
+      "reason": "Duplicate symbol, excluded to meet unique selection count."
+    },
+    {
+      "symbol": "NKE",
+      "sector": "Consumer Discretionary",
+      "reason": "Duplicate symbol, excluded to meet unique selection count."
+    },
+    {
+      "symbol": "SLB",
+      "sector": "Energy",
+      "reason": "Duplicate symbol, excluded to meet unique selection count."
+    }
+  ],
+  "deployed": [
+    {
+      "symbol": "BAC",
+      "qty": 1,
+      "price": 54.15,
+      "score": 70,
+      "sector": "?",
+      "time": "10:22:30"
+    },
+    {
+      "symbol": "COP",
+      "qty": 1,
+      "price": 121.29,
+      "score": 70,
+      "sector": "?",
+      "time": "10:22:30"
+    },
+    {
+      "symbol": "NKE",
+      "qty": 1,
+      "price": 45.86,
+      "score": 70,
+      "sector": "?",
+      "time": "10:22:30"
+    },
+    {
+      "symbol": "PFE",
+      "qty": 2,
+      "price": 27.33,
+      "score": 70,
+      "sector": "?",
+      "time": "10:22:30"
+    },
+    {
+      "symbol": "SLB",
+      "qty": 1,
+      "price": 52.38,
+      "score": 70,
+      "sector": "?",
+      "time": "10:22:30"
+    },
+    {
+      "symbol": "WMT",
+      "qty": 1,
+      "price": 124.96,
+      "score": 70,
+      "sector": "?",
+      "time": "10:22:30"
+    }
+  ],
+  "positions_eod": [],
+  "stops_triggered": [],
+  "profits_taken": []
+}

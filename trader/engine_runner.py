@@ -246,6 +246,13 @@ def main():
                         import time as _time
                         _time.sleep(3)  # Wait for sells to settle
 
+                    # Log market open
+                    from trader.daily_report import (
+                        log_market_open, log_research, log_deploy, log_event
+                    )
+                    acct_open = trader.get_account()
+                    log_market_open(float(acct_open["portfolio_value"]), float(acct_open["cash"]))
+
                     # Step 1: Qwen researches and builds watchlist
                     from trader.research import pre_screen_research
                     log.info("Running pre-screen research (Qwen)...")
@@ -253,6 +260,7 @@ def main():
                     if picks:
                         pick_names = ", ".join(p["symbol"] for p in picks)
                         log.info(f"[Research] Qwen picked: {pick_names}")
+                        log_research(picks)
                         if tg_token:
                             send_heartbeat(tg_token, tg_chat, f"[Research] Qwen picked: {pick_names}")
 
@@ -261,6 +269,10 @@ def main():
                         log.info("Running screener on Qwen's picks...")
                         result = auto_deploy(trader, cfg["alpaca_api_key"], cfg["alpaca_secret_key"],
                                              max_positions=8)
+
+                        # Log each deploy
+                        for d in result.get("picks", []):
+                            log_deploy(d["symbol"], d.get("qty", 1), 0, d["score"], d["sector"])
                     else:
                         log.warning("[Research] Qwen returned no picks. Will retry next cycle.")
                         if tg_token:
@@ -294,6 +306,7 @@ def main():
                 from trader.strategies import get_pnl_summary
                 pnl = get_pnl_summary()
 
+                # Build EOD summary
                 eod = f"[Engine] Market closed.\n"
                 eod += f"Portfolio: ${float(account['portfolio_value']):,.0f}\n"
                 eod += f"Cash: ${float(account['cash']):,.0f}\n"
@@ -302,8 +315,17 @@ def main():
                     eod += f"Open positions: {len(positions)}, unrealized P&L: ${total_pl:+,.2f}\n"
                 eod += f"Realized P&L today: ${pnl['realized_pnl']:+,.2f}"
 
+                # Save daily report
+                from trader.daily_report import log_market_close, format_report
+                pos_data = [{"symbol": p["symbol"], "qty": p["qty"],
+                             "pl": float(p["unrealized_pl"])} for p in positions]
+                log_market_close(float(account["portfolio_value"]),
+                                 float(account["cash"]), pos_data, pnl["realized_pnl"])
+
+                # Send full daily report to Telegram
+                full_report = format_report()
                 if tg_token:
-                    send_heartbeat(tg_token, tg_chat, eod)
+                    send_heartbeat(tg_token, tg_chat, full_report[:4000])
                 write_heartbeat_file("MARKET CLOSED", eod.replace("\n", " | "))
                 log.info(eod)
                 market_was_open = False

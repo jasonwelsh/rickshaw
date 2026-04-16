@@ -512,5 +512,101 @@
       }
     ],
     "report": "NKE|Consumer|RSI 33.7 (neutral), above SMA5, strong 5D momentum (+8.0%).\nSLB|Energy|RSI 51.5 (neutral), above SMA5/20, positive 20D trend (+18.2%).\nBAC|Financial|RSI 81.9 (overbought risk), but above SMA5/20 with high VRAT 0.2.\nWMT|Consumer|RSI 57.5 (neutral), above SMA5/20, stable volume ratio 0.14.\nUNH|Healthcare|RSI 81.4 (overbought risk), above SMA5/20, strong 5D gain (+3.1%).\nV|Financial|RSI 60.6 (neutral), above SMA5/20, solid 5D performance (+3.8%).\nGOOG|Technology|RSI 86.6 (overbought), above SMA5/20, exceptional 5D surge (+5.6%).\nMCD|Consumer|RSI 46.8 (neutral), above SMA5, decent 5D stability (+0.4%)."
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-16T10:11:56.352989",
+    "mode": "qwen",
+    "picks": [
+      {
+        "symbol": "PFE",
+        "sector": "Healthcare",
+        "reason": "RSI 47.8 neutral, above SMA5, low volatility suitable for core holding."
+      },
+      {
+        "symbol": "SLB",
+        "sector": "Energy",
+        "reason": "RSI 50.2 neutral, above both SMAs indicating strong short-term uptrend."
+      },
+      {
+        "symbol": "BAC",
+        "sector": "Financials",
+        "reason": "RSI 83.3 overbought but above SMAs; high volume ratio suggests momentum continuation."
+      },
+      {
+        "symbol": "COP",
+        "sector": "Energy",
+        "reason": "RSI 27.9 oversold buy signal, above SMA5, potential value rebound."
+      },
+      {
+        "symbol": "WMT",
+        "sector": "Consumer Staples",
+        "reason": "RSI 56.8 neutral, above SMA20, defensive sector diversification."
+      },
+      {
+        "symbol": "AMZN",
+        "sector": "Technology",
+        "reason": "RSI 79.6 overbought but above SMAs; high volume ratio supports trend."
+      },
+      {
+        "symbol": "AAPL",
+        "sector": "Technology",
+        "reason": "RSI 60.5 neutral, above both SMAs, strong institutional interest."
+      },
+      {
+        "symbol": "MCD",
+        "sector": "Consumer Discretionary",
+        "reason": "RSI 47.2 neutral, above SMA5, stable dividend payer."
+      }
+    ],
+    "report": "PFE|Healthcare|RSI 47.8 neutral, above SMA5, low volatility suitable for core holding.\nSLB|Energy|RSI 50.2 neutral, above both SMAs indicating strong short-term uptrend.\nBAC|Financials|RSI 83.3 overbought but above SMAs; high volume ratio suggests momentum continuation.\nCOP|Energy|RSI 27.9 oversold buy signal, above SMA5, potential value rebound.\nWMT|Consumer Staples|RSI 56.8 neutral, above SMA20, defensive sector diversification.\nAMZN|Technology|RSI 79.6 overbought but above SMAs; high volume ratio supports trend.\nAAPL|Technology|RSI 60.5 neutral, above both SMAs, strong institutional interest.\nMCD|Consumer Discretionary|RSI 47.2 neutral, above SMA5, stable dividend payer."
+  },
+  {
+    "session": "pre_screen",
+    "time": "2026-04-16T10:14:05.660437",
+    "mode": "qwen",
+    "picks": [
+      {
+        "symbol": "PFE",
+        "sector": "Healthcare",
+        "reason": "RSI 47.8 neutral, above SMA5, low volatility suitable for core holding."
+      },
+      {
+        "symbol": "NKE",
+        "sector": "Consumer Discretionary",
+        "reason": "RSI 33.2 oversold bounce, strong 5-day gain (+7.7%), above SMA5."
+      },
+      {
+        "symbol": "SLB",
+        "sector": "Energy",
+        "reason": "RSI 50.0 neutral, above both SMAs, high 20-day momentum (+17.5%)."
+      },
+      {
+        "symbol": "BAC",
+        "sector": "Financials",
+        "reason": "RSI 82.4 overbought, excluded per instruction to avoid already held."
+      },
+      {
+        "symbol": "COP",
+        "sector": "Energy",
+        "reason": "Not listed in provided table, excluded per instruction."
+      },
+      {
+        "symbol": "PFE",
+        "sector": "Healthcare",
+        "reason": "Duplicate symbol, excluded to meet unique selection count."
+      },
+      {
+        "symbol": "NKE",
+        "sector": "Consumer Discretionary",
+        "reason": "Duplicate symbol, excluded to meet unique selection count."
+      },
+      {
+        "symbol": "SLB",
+        "sector": "Energy",
+        "reason": "Duplicate symbol, excluded to meet unique selection count."
+      }
+    ],
+    "report": "PFE|Healthcare|RSI 47.8 neutral, above SMA5, low volatility suitable for core holding.\nNKE|Consumer Discretionary|RSI 33.2 oversold bounce, strong 5-day gain (+7.7%), above SMA5.\nSLB|Energy|RSI 50.0 neutral, above both SMAs, high 20-day momentum (+17.5%).\nBAC|Financials|RSI 82.4 overbought, excluded per instruction to avoid already held.\nCOP|Energy|Not listed in provided table, excluded per instruction.\nPFE|Healthcare|Duplicate symbol, excluded to meet unique selection count.\nNKE|Consumer Discretionary|Duplicate symbol, excluded to meet unique selection count.\nSLB|Energy|Duplicate symbol, excluded to meet unique selection count."
   }
 ]

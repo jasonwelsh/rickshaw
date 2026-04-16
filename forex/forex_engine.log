@@ -5335,3 +5335,52 @@ Positions: 1
   USD_JPY: SHORT 3000u $-4.73
 Spreads: EUR_USD:1.6p GBP_USD:1.9p USD_JPY:1.6p
 Strategies: 0 active
+2026-04-16 09:25:17,916 [Forex 09:25:17] cycle #2215
+NAV: $100,000.54 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-5.01
+Positions: 1
+  USD_JPY: SHORT 3000u $-5.01
+Spreads: EUR_USD:1.8p GBP_USD:1.8p USD_JPY:1.8p
+Strategies: 0 active
+2026-04-16 09:30:27,110 [Forex 09:30:27] cycle #2220
+NAV: $100,000.10 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-5.45
+Positions: 1
+  USD_JPY: SHORT 3000u $-5.45
+Spreads: EUR_USD:1.6p GBP_USD:1.9p USD_JPY:1.8p
+Strategies: 0 active
+2026-04-16 09:35:34,777 [Forex 09:35:34] cycle #2225
+NAV: $100,000.60 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-4.95
+Positions: 1
+  USD_JPY: SHORT 3000u $-4.95
+Spreads: EUR_USD:1.7p GBP_USD:2.0p USD_JPY:1.8p
+Strategies: 0 active
+2026-04-16 09:40:43,409 [Forex 09:40:43] cycle #2230
+NAV: $99,999.97 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-5.58
+Positions: 1
+  USD_JPY: SHORT 3000u $-5.58
+Spreads: EUR_USD:1.7p GBP_USD:1.6p USD_JPY:1.8p
+Strategies: 0 active
+2026-04-16 09:45:53,412 [Forex 09:45:53] cycle #2235
+NAV: $100,000.01 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-5.54
+Positions: 1
+  USD_JPY: SHORT 3000u $-5.52
+Spreads: EUR_USD:1.7p GBP_USD:2.0p USD_JPY:1.8p
+Strategies: 0 active
+2026-04-16 09:51:00,376 [Forex 09:51:00] cycle #2240
+NAV: $99,999.08 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-6.47
+Positions: 1
+  USD_JPY: SHORT 3000u $-6.47
+Spreads: EUR_USD:1.4p GBP_USD:2.1p USD_JPY:1.4p
+Strategies: 0 active
+2026-04-16 09:56:07,974 [Forex 09:56:07] cycle #2245
+NAV: $99,997.46 | Balance: $100,005.55
+Margin: $150.00 | UPL: $-8.09
+Positions: 1
+  USD_JPY: SHORT 3000u $-8.09
+Spreads: EUR_USD:1.8p GBP_USD:2.0p USD_JPY:1.8p
+Strategies: 0 active
